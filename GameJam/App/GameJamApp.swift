@@ -14,6 +14,14 @@ struct GameJamApp: App {
         runManualKeySearchValidatorSelfCheck()
         runManualRouteTraceValidatorSelfCheck()
         runButtonChoiceValidatorSelfCheck()
+        runPathSwipeValidatorSelfCheck()
+        runRobotTargetValidatorSelfCheck()
+        runElevatorChoiceValidatorSelfCheck()
+        runBridgeBalanceValidatorSelfCheck()
+        runCitizenRescueValidatorSelfCheck()
+        runCrowdResistanceValidatorSelfCheck()
+        runTransitSwitchSearchValidatorSelfCheck()
+        runManualTunnelEntryValidatorSelfCheck()
         #endif
     }
 

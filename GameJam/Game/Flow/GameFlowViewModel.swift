@@ -105,6 +105,81 @@ final class GameFlowViewModel {
             print("Score:", score)
         }
 
+        if activeLevel == .chapter2PerfectStreet {
+            if result.didSucceed {
+                print("Chapter 2 Level 1 completed:", result.message)
+            } else {
+                print("Chapter 2 Level 1 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .chapter2WrongRobotTarget {
+            if result.didSucceed {
+                print("Chapter 2 Level 2 completed:", result.message)
+            } else {
+                print("Chapter 2 Level 2 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .chapter2AvoidSafeElevator {
+            if result.didSucceed {
+                print("Chapter 2 Level 3 completed:", result.message)
+            } else {
+                print("Chapter 2 Level 3 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .chapter2ManualBridgeBalance {
+            if result.didSucceed {
+                print("Chapter 2 Level 4 completed:", result.message)
+            } else {
+                print("Chapter 2 Level 4 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .chapter2RescueChairCitizen {
+            if result.didSucceed {
+                print("Chapter 2 Level 5 completed:", result.message)
+            } else {
+                print("Chapter 2 Level 5 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .chapter2WalkAgainstCrowd {
+            if result.didSucceed {
+                print("Chapter 2 Level 6 completed:", result.message)
+            } else {
+                print("Chapter 2 Level 6 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .chapter2FindOldTransitSwitch {
+            if result.didSucceed {
+                print("Chapter 2 Level 7 completed:", result.message)
+            } else {
+                print("Chapter 2 Level 7 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .chapter2EnterManualTunnel {
+            if result.didSucceed {
+                print("Chapter 2 Level 8 completed:", result.message)
+                print("Chapter 2 completed")
+                print("Unlocking Chapter 3 — The Archive")
+                print("TODO: advance to Chapter 3 — The Archive")
+            } else {
+                print("Chapter 2 Level 8 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
         if activeLevel == .finalApartmentChoice && result.didSucceed {
             lastResult = result
             screen = .chapterTransition
@@ -167,14 +242,72 @@ final class GameFlowViewModel {
             lastResult = nil
             setScene(for: activeLevel)
             print("Switched to Level 8")
+            return
+        }
+
+        if activeLevel == .chapter2PerfectStreet && result.didSucceed {
+            activeLevel = .chapter2WrongRobotTarget
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Chapter 2 Level 2")
+            return
+        }
+
+        if activeLevel == .chapter2WrongRobotTarget && result.didSucceed {
+            activeLevel = .chapter2AvoidSafeElevator
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Chapter 2 Level 3")
+            return
+        }
+
+        if activeLevel == .chapter2AvoidSafeElevator && result.didSucceed {
+            activeLevel = .chapter2ManualBridgeBalance
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Chapter 2 Level 4")
+            return
+        }
+
+        if activeLevel == .chapter2ManualBridgeBalance && result.didSucceed {
+            activeLevel = .chapter2RescueChairCitizen
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Chapter 2 Level 5")
+            return
+        }
+
+        if activeLevel == .chapter2RescueChairCitizen && result.didSucceed {
+            activeLevel = .chapter2WalkAgainstCrowd
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Chapter 2 Level 6")
+            return
+        }
+
+        if activeLevel == .chapter2WalkAgainstCrowd && result.didSucceed {
+            activeLevel = .chapter2FindOldTransitSwitch
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Chapter 2 Level 7")
+            return
+        }
+
+        if activeLevel == .chapter2FindOldTransitSwitch && result.didSucceed {
+            activeLevel = .chapter2EnterManualTunnel
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Chapter 2 Level 8")
         }
     }
 
     func completeChapterTransition() {
         guard screen == .chapterTransition else { return }
         screen = .gameplay
+        activeLevel = .chapter2PerfectStreet
+        lastResult = nil
+        setScene(for: activeLevel)
         print("Chapter transition completed")
-        print("Chapter 2 Level 1 TODO")
     }
 
     private func setScene(for level: ActiveLevel) {
@@ -231,6 +364,54 @@ final class GameFlowViewModel {
                 self?.finishLevel(with: result)
             }
         }
+
+        if let streetScene = scene as? PerfectStreetScene {
+            streetScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let robotScene = scene as? WrongRobotTargetScene {
+            robotScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let elevatorScene = scene as? AvoidSafeElevatorScene {
+            elevatorScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let bridgeScene = scene as? ManualBridgeBalanceScene {
+            bridgeScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let rescueScene = scene as? RescueChairCitizenScene {
+            rescueScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let crowdScene = scene as? WalkAgainstCrowdScene {
+            crowdScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let transitScene = scene as? FindOldTransitSwitchScene {
+            transitScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let tunnelScene = scene as? EnterManualTunnelScene {
+            tunnelScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
     }
 
     private static func makeScene(for level: ActiveLevel) -> SKScene {
@@ -252,6 +433,22 @@ final class GameFlowViewModel {
             scene = DrawManualRouteScene(size: CGSize(width: 390, height: 844))
         case .finalApartmentChoice:
             scene = FinalApartmentChoiceScene(size: CGSize(width: 390, height: 844))
+        case .chapter2PerfectStreet:
+            scene = PerfectStreetScene(size: CGSize(width: 390, height: 844))
+        case .chapter2WrongRobotTarget:
+            scene = WrongRobotTargetScene(size: CGSize(width: 390, height: 844))
+        case .chapter2AvoidSafeElevator:
+            scene = AvoidSafeElevatorScene(size: CGSize(width: 390, height: 844))
+        case .chapter2ManualBridgeBalance:
+            scene = ManualBridgeBalanceScene(size: CGSize(width: 390, height: 844))
+        case .chapter2RescueChairCitizen:
+            scene = RescueChairCitizenScene(size: CGSize(width: 390, height: 844))
+        case .chapter2WalkAgainstCrowd:
+            scene = WalkAgainstCrowdScene(size: CGSize(width: 390, height: 844))
+        case .chapter2FindOldTransitSwitch:
+            scene = FindOldTransitSwitchScene(size: CGSize(width: 390, height: 844))
+        case .chapter2EnterManualTunnel:
+            scene = EnterManualTunnelScene(size: CGSize(width: 390, height: 844))
         }
         scene.scaleMode = .resizeFill
         return scene
