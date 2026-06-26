@@ -4,6 +4,9 @@ enum ActiveLevel {
     case openSmartCurtain
     case manualBreakfast
     case holdWristDevice
+    case findManualKey
+    case drawManualRoute
+    case finalApartmentChoice
 
     var title: String {
         switch self {
@@ -17,6 +20,12 @@ enum ActiveLevel {
             "Level 4 — Manual Breakfast"
         case .holdWristDevice:
             "Level 5 — Hold The Wrist Device"
+        case .findManualKey:
+            "Level 6 — Find The Manual Key"
+        case .drawManualRoute:
+            "Level 7 — Draw Manual Route To Door"
+        case .finalApartmentChoice:
+            "Level 8 — Final Apartment Choice: Red Button"
         }
     }
 
@@ -32,6 +41,12 @@ enum ActiveLevel {
             "Choose the handmade toast"
         case .holdWristDevice:
             "Hold the yellow wrist device"
+        case .findManualKey:
+            "Drag the light → find the yellow key"
+        case .drawManualRoute:
+            "Draw the yellow route to the door"
+        case .finalApartmentChoice:
+            "Press the red manual override button"
         }
     }
 }

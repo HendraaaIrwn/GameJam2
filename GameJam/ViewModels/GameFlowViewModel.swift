@@ -8,6 +8,7 @@ final class GameFlowViewModel {
     private(set) var lastResult: LevelResult?
     private(set) var attempt = 1
     private(set) var activeLevel: ActiveLevel = .wakeUpManually
+    private(set) var screen: GameScreen = .gameplay
     private(set) var sceneID = UUID()
 
     var scene: SKScene
@@ -69,11 +70,46 @@ final class GameFlowViewModel {
         if activeLevel == .holdWristDevice {
             if result.didSucceed {
                 print("Level 5 completed:", result.message)
-                print("TODO: Level 6 routing")
             } else {
                 print("Level 5 failed:", result.message)
             }
             print("Score:", score)
+        }
+
+        if activeLevel == .findManualKey {
+            if result.didSucceed {
+                print("Level 6 completed:", result.message)
+            } else {
+                print("Level 6 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .drawManualRoute {
+            if result.didSucceed {
+                print("Level 7 completed:", result.message)
+            } else {
+                print("Level 7 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .finalApartmentChoice {
+            if result.didSucceed {
+                print("Level 8 completed:", result.message)
+                print("Chapter 1 completed")
+                print("TODO: unlock Chapter 2")
+            } else {
+                print("Level 8 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .finalApartmentChoice && result.didSucceed {
+            lastResult = result
+            screen = .chapterTransition
+            print("Switched to Chapter 1 to Chapter 2 transition")
+            return
         }
 
         lastResult = result
@@ -107,7 +143,38 @@ final class GameFlowViewModel {
             lastResult = nil
             setScene(for: activeLevel)
             print("Switched to Level 5")
+            return
         }
+
+        if activeLevel == .holdWristDevice && result.didSucceed {
+            activeLevel = .findManualKey
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Level 6")
+            return
+        }
+
+        if activeLevel == .findManualKey && result.didSucceed {
+            activeLevel = .drawManualRoute
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Level 7")
+            return
+        }
+
+        if activeLevel == .drawManualRoute && result.didSucceed {
+            activeLevel = .finalApartmentChoice
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Level 8")
+        }
+    }
+
+    func completeChapterTransition() {
+        guard screen == .chapterTransition else { return }
+        screen = .gameplay
+        print("Chapter transition completed")
+        print("Chapter 2 Level 1 TODO")
     }
 
     private func setScene(for level: ActiveLevel) {
@@ -146,6 +213,24 @@ final class GameFlowViewModel {
                 self?.finishLevel(with: result)
             }
         }
+
+        if let keyScene = scene as? FindManualKeyScene {
+            keyScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let routeScene = scene as? DrawManualRouteScene {
+            routeScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let finalScene = scene as? FinalApartmentChoiceScene {
+            finalScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
     }
 
     private static func makeScene(for level: ActiveLevel) -> SKScene {
@@ -161,6 +246,12 @@ final class GameFlowViewModel {
             scene = ManualBreakfastScene(size: CGSize(width: 390, height: 844))
         case .holdWristDevice:
             scene = HoldWristDeviceScene(size: CGSize(width: 390, height: 844))
+        case .findManualKey:
+            scene = FindManualKeyScene(size: CGSize(width: 390, height: 844))
+        case .drawManualRoute:
+            scene = DrawManualRouteScene(size: CGSize(width: 390, height: 844))
+        case .finalApartmentChoice:
+            scene = FinalApartmentChoiceScene(size: CGSize(width: 390, height: 844))
         }
         scene.scaleMode = .resizeFill
         return scene

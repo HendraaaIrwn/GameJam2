@@ -11,6 +11,9 @@ struct GameJamApp: App {
         runCurtainDragValidatorSelfCheck()
         runFoodChoiceValidatorSelfCheck()
         runHoldGestureValidatorSelfCheck()
+        runManualKeySearchValidatorSelfCheck()
+        runManualRouteTraceValidatorSelfCheck()
+        runButtonChoiceValidatorSelfCheck()
         #endif
     }
 
