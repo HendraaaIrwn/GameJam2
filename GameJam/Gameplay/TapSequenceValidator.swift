@@ -12,7 +12,6 @@ enum TapSequenceValidationResult: Equatable {
 final class TapSequenceValidator {
     let noInputTimeout = 3.0
     let maxTapGap = 1.4
-    let totalTimeLimit = 8.0
 
     private let sequence: [TapZone] = [.body, .head, .body, .wrist]
     private var startTime: TimeInterval?
@@ -26,12 +25,11 @@ final class TapSequenceValidator {
     }
 
     func registerTap(zone: TapZone, time: TimeInterval) -> TapSequenceValidationResult {
-        guard let startTime else {
+        guard startTime != nil else {
             start(at: time)
             return registerTap(zone: zone, time: time)
         }
 
-        if time - startTime > totalTimeLimit { return .totalTimeout }
         if let lastTapTime, time - lastTapTime > maxTapGap { return .gapTimeout }
 
         let expected = sequence[progress]
@@ -46,7 +44,6 @@ final class TapSequenceValidator {
 
     func checkTimeouts(currentTime: TimeInterval) -> TapSequenceValidationResult? {
         guard let startTime else { return nil }
-        if currentTime - startTime > totalTimeLimit { return .totalTimeout }
         if let lastTapTime {
             return currentTime - lastTapTime > maxTapGap ? .gapTimeout : nil
         }
