@@ -8,6 +8,9 @@ struct GameJamApp: App {
         #if DEBUG
         runTapSequenceValidatorSelfCheck()
         runSwipeDismissValidatorSelfCheck()
+        runCurtainDragValidatorSelfCheck()
+        runFoodChoiceValidatorSelfCheck()
+        runHoldGestureValidatorSelfCheck()
         #endif
     }
 

@@ -11,18 +11,19 @@ final class RejectAutoRoutineScene: SKScene {
     }
 
     private let stateMachine = LevelStateMachine()
+    private let timerController = LevelTimerController(totalDuration: 8.0)
+    private let timerHUD = LevelTimerHUDNode(width: 260, height: 14)
     private let validator = SwipeDismissValidator()
 
     private var currentSceneTime: TimeInterval = 0
     private var levelStartTime: TimeInterval?
     private var hasReceivedInput = false
     private var hasSentResult = false
+    private var hasLoggedTimerWarning = false
     private var dragStartPoint: CGPoint?
     private var cardStartPosition: CGPoint = .zero
 
     private let noInputTimeout = 4.0
-    private let totalTimeLimit = 8.0
-
     private let aiScreenNode = SKShapeNode(rectOf: .zero)
     private let aiFaceLabel = SKLabelNode(text: "◡")
     private let rakaNode = SKShapeNode(rectOf: .zero)
@@ -38,7 +39,9 @@ final class RejectAutoRoutineScene: SKScene {
         stateMachine.reset()
         levelStartTime = nil
         hasReceivedInput = false
+        timerController.reset()
         hasSentResult = false
+        hasLoggedTimerWarning = false
         dragStartPoint = nil
     }
 
@@ -47,20 +50,20 @@ final class RejectAutoRoutineScene: SKScene {
 
         if stateMachine.state == .ready {
             levelStartTime = currentTime
+            timerController.start(at: currentTime)
+            timerHUD.update(with: timerController.update(currentTime: currentTime))
             stateMachine.transition(to: .playing)
             print("Level 2 timer started")
+            print("Timer started for level:", "chapter1.level2.reject-auto-routine")
             return
         }
 
         guard stateMachine.canCheckTimeout, let levelStartTime else { return }
 
+        if updateTimer(currentTime: currentTime) { return }
+
         if !hasReceivedInput && currentTime - levelStartTime > noInputTimeout {
             triggerFailure(reason: .noInputTimeout)
-            return
-        }
-
-        if currentTime - levelStartTime > totalTimeLimit {
-            triggerFailure(reason: .totalTimeout)
         }
     }
 
@@ -139,9 +142,32 @@ final class RejectAutoRoutineScene: SKScene {
         addBackground()
         addAIScreen()
         addCommandCard()
+        addTimerHUD()
         addRaka()
         addRoutineCards()
         addFeedback()
+    }
+
+
+    private func addTimerHUD() {
+        timerHUD.position = CGPoint(x: size.width / 2, y: 72)
+        timerHUD.zPosition = 1000
+        addChild(timerHUD)
+    }
+
+    private func updateTimer(currentTime: TimeInterval) -> Bool {
+        let timerState = timerController.update(currentTime: currentTime)
+        timerHUD.update(with: timerState)
+        if timerState.isWarning && !hasLoggedTimerWarning {
+            hasLoggedTimerWarning = true
+            print("Timer warning started:", "chapter1.level2.reject-auto-routine")
+        }
+        if timerState.hasExpired {
+            print("Timer expired:", "chapter1.level2.reject-auto-routine")
+            triggerFailure(reason: .totalTimeout)
+            return true
+        }
+        return false
     }
 
     private func addBackground() {

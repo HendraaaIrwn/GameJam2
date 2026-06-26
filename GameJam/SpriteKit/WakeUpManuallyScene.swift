@@ -5,9 +5,12 @@ final class WakeUpManuallyScene: SKScene {
 
     private let stateMachine = LevelStateMachine()
     private let validator = TapSequenceValidator()
+    private let timerController = LevelTimerController(totalDuration: 8.0)
+    private let timerHUD = LevelTimerHUDNode(width: 260, height: 14)
 
     private var currentSceneTime: TimeInterval = 0
     private var hasSentResult = false
+    private var hasLoggedTimerWarning = false
 
     private let aiScreenNode = SKShapeNode(rectOf: .zero)
     private let blanketNode = SKShapeNode(rectOf: .zero)
@@ -22,7 +25,9 @@ final class WakeUpManuallyScene: SKScene {
         setupScene()
         stateMachine.reset()
         validator.reset()
+        timerController.reset()
         hasSentResult = false
+        hasLoggedTimerWarning = false
     }
 
     override func update(_ currentTime: TimeInterval) {
@@ -30,13 +35,25 @@ final class WakeUpManuallyScene: SKScene {
 
         if stateMachine.state == .ready {
             validator.start(at: currentTime)
+            timerController.start(at: currentTime)
+            timerHUD.update(with: timerController.update(currentTime: currentTime))
             stateMachine.transition(to: .playing)
+            print("Timer started for level:", "chapter1.level1.wake-up-manually")
             return
         }
 
-        guard stateMachine.canCheckTimeout,
-              let timeout = validator.checkTimeouts(currentTime: currentTime) else { return }
+        guard stateMachine.canCheckTimeout else { return }
 
+        let timerState = timerController.update(currentTime: currentTime)
+        timerHUD.update(with: timerState)
+        logTimerWarningIfNeeded(timerState, levelId: "chapter1.level1.wake-up-manually")
+        if timerState.hasExpired {
+            print("Timer expired:", "chapter1.level1.wake-up-manually")
+            triggerFailure()
+            return
+        }
+
+        guard let timeout = validator.checkTimeouts(currentTime: currentTime) else { return }
         handleValidationResult(timeout)
     }
 
@@ -55,6 +72,7 @@ final class WakeUpManuallyScene: SKScene {
         addBackground()
         addAIScreen()
         addCommandCard()
+        addTimerHUD()
         addBedAndRaka()
         addProgressAndFeedback()
     }
@@ -111,6 +129,19 @@ final class WakeUpManuallyScene: SKScene {
         command.verticalAlignmentMode = .center
         command.preferredMaxLayoutWidth = size.width * 0.7
         card.addChild(command)
+    }
+
+
+    private func addTimerHUD() {
+        timerHUD.position = CGPoint(x: size.width / 2, y: 72)
+        timerHUD.zPosition = 1000
+        addChild(timerHUD)
+    }
+
+    private func logTimerWarningIfNeeded(_ timerState: LevelTimerState, levelId: String) {
+        guard timerState.isWarning, !hasLoggedTimerWarning else { return }
+        hasLoggedTimerWarning = true
+        print("Timer warning started:", levelId)
     }
 
     private func addBedAndRaka() {

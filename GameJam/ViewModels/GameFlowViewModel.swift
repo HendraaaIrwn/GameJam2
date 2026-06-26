@@ -48,6 +48,34 @@ final class GameFlowViewModel {
             print("Score:", score)
         }
 
+        if activeLevel == .openSmartCurtain {
+            if result.didSucceed {
+                print("Level 3 completed:", result.message)
+            } else {
+                print("Level 3 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .manualBreakfast {
+            if result.didSucceed {
+                print("Level 4 completed:", result.message)
+            } else {
+                print("Level 4 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
+        if activeLevel == .holdWristDevice {
+            if result.didSucceed {
+                print("Level 5 completed:", result.message)
+                print("TODO: Level 6 routing")
+            } else {
+                print("Level 5 failed:", result.message)
+            }
+            print("Score:", score)
+        }
+
         lastResult = result
 
         if activeLevel == .wakeUpManually && result.didSucceed {
@@ -55,6 +83,30 @@ final class GameFlowViewModel {
             lastResult = nil
             setScene(for: activeLevel)
             print("Switched to Level 2")
+            return
+        }
+
+        if activeLevel == .rejectAutoRoutine && result.didSucceed {
+            activeLevel = .openSmartCurtain
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Level 3")
+            return
+        }
+
+        if activeLevel == .openSmartCurtain && result.didSucceed {
+            activeLevel = .manualBreakfast
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Level 4")
+            return
+        }
+
+        if activeLevel == .manualBreakfast && result.didSucceed {
+            activeLevel = .holdWristDevice
+            lastResult = nil
+            setScene(for: activeLevel)
+            print("Switched to Level 5")
         }
     }
 
@@ -76,6 +128,24 @@ final class GameFlowViewModel {
                 self?.finishLevel(with: result)
             }
         }
+
+        if let curtainScene = scene as? OpenSmartCurtainScene {
+            curtainScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let breakfastScene = scene as? ManualBreakfastScene {
+            breakfastScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
+
+        if let holdScene = scene as? HoldWristDeviceScene {
+            holdScene.levelCompletion = { [weak self] result in
+                self?.finishLevel(with: result)
+            }
+        }
     }
 
     private static func makeScene(for level: ActiveLevel) -> SKScene {
@@ -85,6 +155,12 @@ final class GameFlowViewModel {
             scene = WakeUpManuallyScene(size: CGSize(width: 390, height: 844))
         case .rejectAutoRoutine:
             scene = RejectAutoRoutineScene(size: CGSize(width: 390, height: 844))
+        case .openSmartCurtain:
+            scene = OpenSmartCurtainScene(size: CGSize(width: 390, height: 844))
+        case .manualBreakfast:
+            scene = ManualBreakfastScene(size: CGSize(width: 390, height: 844))
+        case .holdWristDevice:
+            scene = HoldWristDeviceScene(size: CGSize(width: 390, height: 844))
         }
         scene.scaleMode = .resizeFill
         return scene
