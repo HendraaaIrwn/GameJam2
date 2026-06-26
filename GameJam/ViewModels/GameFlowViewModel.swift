@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 import SpriteKit
 
@@ -7,6 +8,7 @@ final class GameFlowViewModel {
     private(set) var lastResult: LevelResult?
     private(set) var attempt = 1
     private(set) var activeLevel: ActiveLevel = .wakeUpManually
+    private(set) var sceneID = UUID()
 
     var scene: SKScene
 
@@ -30,8 +32,7 @@ final class GameFlowViewModel {
     func retry() {
         attempt += 1
         lastResult = nil
-        scene = Self.makeScene(for: activeLevel)
-        assignCompletion(to: scene)
+        setScene(for: activeLevel)
     }
 
     private func finishLevel(with result: LevelResult) {
@@ -52,9 +53,15 @@ final class GameFlowViewModel {
         if activeLevel == .wakeUpManually && result.didSucceed {
             activeLevel = .rejectAutoRoutine
             lastResult = nil
-            scene = Self.makeScene(for: activeLevel)
-            assignCompletion(to: scene)
+            setScene(for: activeLevel)
+            print("Switched to Level 2")
         }
+    }
+
+    private func setScene(for level: ActiveLevel) {
+        scene = Self.makeScene(for: level)
+        assignCompletion(to: scene)
+        sceneID = UUID()
     }
 
     private func assignCompletion(to scene: SKScene) {

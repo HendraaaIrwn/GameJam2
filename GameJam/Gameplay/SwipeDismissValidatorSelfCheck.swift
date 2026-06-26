@@ -1,4 +1,5 @@
 #if DEBUG
+import CoreGraphics
 func runSwipeDismissValidatorSelfCheck() {
     let validator = SwipeDismissValidator()
     assert(validator.validateSwipe(translation: .init(dx: 128, dy: 12)) == .validDismiss)

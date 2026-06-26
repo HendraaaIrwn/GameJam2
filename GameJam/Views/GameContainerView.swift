@@ -7,6 +7,7 @@ struct GameContainerView: View {
     var body: some View {
         ZStack(alignment: .top) {
             SpriteView(scene: viewModel.scene)
+                .id(viewModel.sceneID)
                 .ignoresSafeArea()
 
             GameHUDView(

@@ -76,16 +76,16 @@ final class RejectAutoRoutineScene: SKScene {
             return
         }
 
-        if touchedSmallRoutineCard(at: location) {
-            triggerFailure(reason: .routineItemTapped)
-            return
-        }
-
         if routineCardNode.contains(convert(location, to: routineCardNode.parent ?? self)) {
             print("Touched routine card")
             dragStartPoint = location
             cardStartPosition = routineCardNode.position
             stateMachine.transition(to: .sequenceStarted)
+            return
+        }
+
+        if touchedSmallRoutineCard(at: location) {
+            triggerFailure(reason: .routineItemTapped)
         }
     }
 
@@ -126,6 +126,7 @@ final class RejectAutoRoutineScene: SKScene {
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard dragStartPoint != nil else { return }
         dragStartPoint = nil
         snapCardBack(message: "Try again")
     }
