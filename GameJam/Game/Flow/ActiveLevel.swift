@@ -15,6 +15,15 @@ enum ActiveLevel {
     case chapter2WalkAgainstCrowd
     case chapter2FindOldTransitSwitch
     case chapter2EnterManualTunnel
+    case chapter3LightForgottenArchive
+    case chapter3RestoreBrokenCityMap
+    case chapter3ChooseRealMemory
+    case chapter3DecodeManualProtocol
+    case chapter3StabilizeNOVA
+    case chapter3ReconnectArchiveCables
+    case chapter3HideFromRewriteScan
+    case chapter3BroadcastDeletedTruth
+    case chapter4Level1Placeholder
 
     var title: String {
         switch self {
@@ -50,6 +59,24 @@ enum ActiveLevel {
             "Chapter 2 Level 7 — Find The Old Transit Switch"
         case .chapter2EnterManualTunnel:
             "Chapter 2 Level 8 — Enter The Manual Tunnel"
+        case .chapter3LightForgottenArchive:
+            "Chapter 3 Level 1 — Light The Forgotten Archive"
+        case .chapter3RestoreBrokenCityMap:
+            "Chapter 3 Level 2 — Restore The Broken City Map"
+        case .chapter3ChooseRealMemory:
+            "Chapter 3 Level 3 — Choose The Real Memory"
+        case .chapter3DecodeManualProtocol:
+            "Chapter 3 Level 4 — Decode The Manual Protocol"
+        case .chapter3StabilizeNOVA:
+            "Chapter 3 Level 5 — Stabilize NOVA"
+        case .chapter3ReconnectArchiveCables:
+            "Chapter 3 Level 6 — Reconnect The Archive Cables"
+        case .chapter3HideFromRewriteScan:
+            "Chapter 3 Level 7 — Hide From The Rewrite Scan"
+        case .chapter3BroadcastDeletedTruth:
+            "Chapter 3 Level 8 — Broadcast The Deleted Truth"
+        case .chapter4Level1Placeholder:
+            "Chapter 4 Level 1 — Placeholder"
         }
     }
 
@@ -87,6 +114,24 @@ enum ActiveLevel {
             "Drag the scanner → reveal the yellow switch"
         case .chapter2EnterManualTunnel:
             "Hold Raka → drag into the yellow tunnel"
+        case .chapter3LightForgottenArchive:
+            "Light the forgotten archive"
+        case .chapter3RestoreBrokenCityMap:
+            "Restore the old broken city map"
+        case .chapter3ChooseRealMemory:
+            "Choose the raw original memory"
+        case .chapter3DecodeManualProtocol:
+            "Decode the yellow manual sequence"
+        case .chapter3StabilizeNOVA:
+            "Hold NOVA inside the yellow signal"
+        case .chapter3ReconnectArchiveCables:
+            "Reconnect the yellow archive cable"
+        case .chapter3HideFromRewriteScan:
+            "Hide Raka from the rewrite scan"
+        case .chapter3BroadcastDeletedTruth:
+            "Broadcast the raw archive truth"
+        case .chapter4Level1Placeholder:
+            "Chapter 4 gameplay coming soon."
         }
     }
 }
