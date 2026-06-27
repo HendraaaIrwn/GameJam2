@@ -21,7 +21,14 @@ struct GameContainerView: View {
                 )
             }
         case .chapterTransition:
-            ChapterTransitionView(onCompleted: viewModel.completeChapterTransition)
+            switch viewModel.activeTransition {
+            case .chapter1ToChapter2:
+                ChapterTransitionView(onCompleted: viewModel.completeChapterTransition)
+            case .chapter2ToChapter3:
+                Chapter02ToChapter03TransitionView(onCompleted: viewModel.completeChapterTransition)
+            case .chapter3ToChapter4:
+                Chapter03ToChapter04TransitionView(onCompleted: viewModel.completeChapterTransition)
+            }
         }
     }
 }
