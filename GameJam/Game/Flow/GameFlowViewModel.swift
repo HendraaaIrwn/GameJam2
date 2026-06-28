@@ -321,7 +321,7 @@ final class GameFlowViewModel {
         }
 
         if activeLevel == .rejectAutoRoutine && result.didSucceed {
-            activeLevel = .openSmartCurtain
+            activeLevel = .findManualKey
             lastResult = nil
             setScene(for: activeLevel)
             print("Switched to Level 3")
@@ -329,10 +329,10 @@ final class GameFlowViewModel {
         }
 
         if activeLevel == .openSmartCurtain && result.didSucceed {
-            activeLevel = .manualBreakfast
+            activeLevel = .drawManualRoute
             lastResult = nil
             setScene(for: activeLevel)
-            print("Switched to Level 4")
+            print("Switched to Level 7")
             return
         }
 
@@ -345,7 +345,7 @@ final class GameFlowViewModel {
         }
 
         if activeLevel == .holdWristDevice && result.didSucceed {
-            activeLevel = .findManualKey
+            activeLevel = .openSmartCurtain
             lastResult = nil
             setScene(for: activeLevel)
             print("Switched to Level 6")
@@ -353,10 +353,10 @@ final class GameFlowViewModel {
         }
 
         if activeLevel == .findManualKey && result.didSucceed {
-            activeLevel = .drawManualRoute
+            activeLevel = .manualBreakfast
             lastResult = nil
             setScene(for: activeLevel)
-            print("Switched to Level 7")
+            print("Switched to Level 4")
             return
         }
 
