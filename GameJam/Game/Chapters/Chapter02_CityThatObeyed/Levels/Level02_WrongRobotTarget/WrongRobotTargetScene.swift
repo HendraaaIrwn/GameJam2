@@ -84,7 +84,6 @@ final class WrongRobotTargetScene: SKScene {
         addBackground()
         addRoutes()
         addAIScreen()
-        addCommandCard()
         addCharacters()
         addRobots()
         addStopButton()

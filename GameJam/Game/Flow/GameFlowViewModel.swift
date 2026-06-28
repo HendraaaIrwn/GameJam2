@@ -19,12 +19,16 @@ final class GameFlowViewModel {
         assignCompletion(to: scene)
     }
 
-    var levelTitle: String {
-        activeLevel.title
+    var chapterNumber: Int {
+        activeLevel.chapterNumber
     }
 
-    var statusText: String {
-        lastResult?.message ?? activeLevel.instruction
+    var levelNumber: Int {
+        activeLevel.levelNumber
+    }
+
+    var novaInstruction: String {
+        lastResult?.message ?? activeLevel.novaCommand
     }
 
     var canRetry: Bool {
@@ -40,6 +44,15 @@ final class GameFlowViewModel {
     private func finishLevel(with result: LevelResult) {
         guard lastResult == nil else { return }
         score.apply(result)
+
+        if activeLevel == .wakeUpManually {
+            if result.didSucceed {
+                print("Chapter 1 Level 1 revised completed:", result.message)
+            } else {
+                print("Chapter 1 Level 1 revised failed:", result.message)
+            }
+            print("Score:", score)
+        }
 
         if activeLevel == .rejectAutoRoutine {
             if result.didSucceed {

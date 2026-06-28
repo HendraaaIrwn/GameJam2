@@ -81,7 +81,6 @@ final class FinalApartmentChoiceScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addDoor()
         addRaka()
         addNova()

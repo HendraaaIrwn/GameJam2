@@ -80,58 +80,92 @@ enum ActiveLevel {
         }
     }
 
-    var instruction: String {
+    var chapterNumber: Int {
+        switch self {
+        case .wakeUpManually, .rejectAutoRoutine, .openSmartCurtain, .manualBreakfast, .holdWristDevice, .findManualKey, .drawManualRoute, .finalApartmentChoice:
+            1
+        case .chapter2PerfectStreet, .chapter2WrongRobotTarget, .chapter2AvoidSafeElevator, .chapter2ManualBridgeBalance, .chapter2RescueChairCitizen, .chapter2WalkAgainstCrowd, .chapter2FindOldTransitSwitch, .chapter2EnterManualTunnel:
+            2
+        case .chapter3LightForgottenArchive, .chapter3RestoreBrokenCityMap, .chapter3ChooseRealMemory, .chapter3DecodeManualProtocol, .chapter3StabilizeNOVA, .chapter3ReconnectArchiveCables, .chapter3HideFromRewriteScan, .chapter3BroadcastDeletedTruth:
+            3
+        case .chapter4Level1Placeholder:
+            4
+        }
+    }
+
+    var levelNumber: Int {
+        switch self {
+        case .wakeUpManually, .chapter2PerfectStreet, .chapter3LightForgottenArchive, .chapter4Level1Placeholder:
+            1
+        case .rejectAutoRoutine, .chapter2WrongRobotTarget, .chapter3RestoreBrokenCityMap:
+            2
+        case .openSmartCurtain, .chapter2AvoidSafeElevator, .chapter3ChooseRealMemory:
+            3
+        case .manualBreakfast, .chapter2ManualBridgeBalance, .chapter3DecodeManualProtocol:
+            4
+        case .holdWristDevice, .chapter2RescueChairCitizen, .chapter3StabilizeNOVA:
+            5
+        case .findManualKey, .chapter2WalkAgainstCrowd, .chapter3ReconnectArchiveCables:
+            6
+        case .drawManualRoute, .chapter2FindOldTransitSwitch, .chapter3HideFromRewriteScan:
+            7
+        case .finalApartmentChoice, .chapter2EnterManualTunnel, .chapter3BroadcastDeletedTruth:
+            8
+        }
+    }
+
+    var novaCommand: String {
         switch self {
         case .wakeUpManually:
-            "Tap body → head → body → wrist"
+            "Do not disturb Raka, Automatic Wake up Routine activated."
         case .rejectAutoRoutine:
-            "Swipe the routine card left or right"
+            "Follow the approved morning routine."
         case .openSmartCurtain:
-            "Drag the curtain open sideways"
+            "Keep smart curtains in automatic comfort mode."
         case .manualBreakfast:
-            "Choose the handmade toast"
+            "Accept the optimized breakfast selection."
         case .holdWristDevice:
-            "Hold the yellow wrist device"
+            "Keep the wrist device synchronized."
         case .findManualKey:
-            "Drag the light → find the yellow key"
+            "Remain inside authorized apartment systems."
         case .drawManualRoute:
-            "Draw the yellow route to the door"
+            "Use only routes approved by MOTHERGRID."
         case .finalApartmentChoice:
-            "Press the red manual override button"
+            "Do not press manual override controls."
         case .chapter2PerfectStreet:
-            "Swipe up-left toward the yellow manual path"
+            "Stay on the perfect route."
         case .chapter2WrongRobotTarget:
-            "Tap the surveillance drone"
+            "Trust MOTHERGRID target identification."
         case .chapter2AvoidSafeElevator:
-            "Swipe left toward the manual stairs"
+            "Enter the safe elevator."
         case .chapter2ManualBridgeBalance:
-            "Tilt to keep Raka centered"
+            "Avoid unstable manual crossings."
         case .chapter2RescueChairCitizen:
-            "Drag the citizen to the yellow safe zone"
+            "Do not disturb seated citizens."
         case .chapter2WalkAgainstCrowd:
-            "Swipe left against the crowd 3 times"
+            "Move with the compliant crowd."
         case .chapter2FindOldTransitSwitch:
-            "Drag the scanner → reveal the yellow switch"
+            "Ignore obsolete transit controls."
         case .chapter2EnterManualTunnel:
-            "Hold Raka → drag into the yellow tunnel"
+            "Remain in the authorized transit lane."
         case .chapter3LightForgottenArchive:
-            "Light the forgotten archive"
+            "Leave forgotten archives offline."
         case .chapter3RestoreBrokenCityMap:
-            "Restore the old broken city map"
+            "Use the current approved city map."
         case .chapter3ChooseRealMemory:
-            "Choose the raw original memory"
+            "Select the corrected memory."
         case .chapter3DecodeManualProtocol:
-            "Decode the yellow manual sequence"
+            "Do not decode manual protocols."
         case .chapter3StabilizeNOVA:
-            "Hold NOVA inside the yellow signal"
+            "Allow NOVA stabilization to proceed."
         case .chapter3ReconnectArchiveCables:
-            "Reconnect the yellow archive cable"
+            "Do not reconnect archive cables."
         case .chapter3HideFromRewriteScan:
-            "Hide Raka from the rewrite scan"
+            "Remain visible for rewrite scan."
         case .chapter3BroadcastDeletedTruth:
-            "Broadcast the raw archive truth"
+            "Do not broadcast deleted truth."
         case .chapter4Level1Placeholder:
-            "Chapter 4 gameplay coming soon."
+            "Await Chapter 4 authorization."
         }
     }
 }

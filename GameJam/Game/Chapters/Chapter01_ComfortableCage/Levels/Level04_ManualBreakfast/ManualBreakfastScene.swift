@@ -100,7 +100,6 @@ final class ManualBreakfastScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addTimerHUD()
         addDispenser()
         addFoods()

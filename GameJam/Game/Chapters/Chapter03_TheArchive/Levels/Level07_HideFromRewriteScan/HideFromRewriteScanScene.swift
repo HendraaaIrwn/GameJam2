@@ -116,7 +116,6 @@ final class HideFromRewriteScanScene: SKScene {
 
         addBackground()
         addAIHeader()
-        addCommandCard()
         addArchiveDataPanel()
         addShadowZones()
         addScanBeam()

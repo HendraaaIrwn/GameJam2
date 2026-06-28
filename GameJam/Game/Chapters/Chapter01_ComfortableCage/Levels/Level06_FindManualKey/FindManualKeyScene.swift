@@ -102,7 +102,6 @@ final class FindManualKeyScene: SKScene {
         backgroundColor = .cream
         addBackground()
         addAIScreen()
-        addCommandCard()
         addKeys()
         addRaka()
         addNova()

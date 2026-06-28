@@ -117,7 +117,6 @@ final class AvoidSafeElevatorScene: SKScene {
         addBackground()
         addRoutes()
         addAIScreen()
-        addCommandCard()
         addElevator()
         addManualStairs()
         addCitizenAndDrone()

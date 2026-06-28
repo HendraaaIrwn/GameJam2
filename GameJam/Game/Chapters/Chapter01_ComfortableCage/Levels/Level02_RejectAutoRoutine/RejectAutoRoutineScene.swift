@@ -141,7 +141,6 @@ final class RejectAutoRoutineScene: SKScene {
 
         addBackground()
         addAIScreen()
-        addCommandCard()
         addTimerHUD()
         addRaka()
         addRoutineCards()

@@ -30,7 +30,6 @@ final class ManualBridgeBalanceScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addBridge()
         addBalanceMeter()
         addCharacters()

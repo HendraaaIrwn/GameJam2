@@ -116,7 +116,6 @@ final class PerfectStreetScene: SKScene {
         addBackground()
         addBuildings()
         addAIScreen()
-        addCommandCard()
         addRoutes()
         addCitizens()
         addChair()

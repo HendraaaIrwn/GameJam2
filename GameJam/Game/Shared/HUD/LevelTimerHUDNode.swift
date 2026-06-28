@@ -27,9 +27,9 @@ final class LevelTimerHUDNode: SKNode {
     func update(with state: LevelTimerState) {
         let fillWidth = max(width * state.progress, 1)
         fillBar.path = CGPath(roundedRect: CGRect(x: -width / 2, y: -height / 2, width: fillWidth, height: height), cornerWidth: height / 2, cornerHeight: height / 2, transform: nil)
-        fillBar.fillColor = state.isWarning ? .warningRed : .manualYellow
+        fillBar.fillColor = state.isWarning ? .appDanger : .appMintGreen
         countdownLabel.text = formatRemainingTime(state.remaining)
-        countdownLabel.fontColor = state.isWarning ? .warningRed : .cream
+        countdownLabel.fontColor = state.isWarning ? .appDanger : .appGlitchPurple
 
         if state.isWarning {
             startWarningAnimation()
@@ -48,30 +48,30 @@ final class LevelTimerHUDNode: SKNode {
 
         titleLabel.fontName = GameFont.heavy
         titleLabel.fontSize = 12
-        titleLabel.fontColor = .cream
+        titleLabel.fontColor = .appGlitchPurple
         titleLabel.horizontalAlignmentMode = .left
         titleLabel.verticalAlignmentMode = .center
         titleLabel.position = CGPoint(x: -width / 2, y: 20)
         titleLabel.zPosition = 2
-        addChild(titleLabel)
+//        addChild(titleLabel)
 
         countdownLabel.fontName = GameFont.heavy
         countdownLabel.fontSize = 16
-        countdownLabel.fontColor = .cream
+        countdownLabel.fontColor = .appGlitchPurple
         countdownLabel.horizontalAlignmentMode = .right
         countdownLabel.verticalAlignmentMode = .center
         countdownLabel.position = CGPoint(x: width / 2, y: 20)
         countdownLabel.zPosition = 2
         addChild(countdownLabel)
 
-        backgroundBar.fillColor = .happyBlue.withAlphaComponent(0.45)
-        backgroundBar.strokeColor = .white
+        backgroundBar.fillColor = .appSurfaceSecondary.withAlphaComponent(0.45)
+        backgroundBar.strokeColor = .appBorderSoft
         backgroundBar.lineWidth = 2
         backgroundBar.position = .zero
         addChild(backgroundBar)
 
         fillBar.path = CGPath(roundedRect: CGRect(x: -width / 2, y: -height / 2, width: width, height: height), cornerWidth: height / 2, cornerHeight: height / 2, transform: nil)
-        fillBar.fillColor = .manualYellow
+        fillBar.fillColor = .appMintGreen
         fillBar.strokeColor = .clear
         fillBar.zPosition = 1
         addChild(fillBar)

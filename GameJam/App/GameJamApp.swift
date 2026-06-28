@@ -6,7 +6,7 @@ struct GameJamApp: App {
 
     init() {
         #if DEBUG
-        runTapSequenceValidatorSelfCheck()
+        runWakeUpTapValidatorSelfCheck()
         runSwipeDismissValidatorSelfCheck()
         runCurtainDragValidatorSelfCheck()
         runFoodChoiceValidatorSelfCheck()
