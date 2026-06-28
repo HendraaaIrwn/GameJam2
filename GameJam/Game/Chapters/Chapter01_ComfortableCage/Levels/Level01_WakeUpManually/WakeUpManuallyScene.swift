@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class WakeUpManuallyScene: SKScene {
+class WakeUpManuallyScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -70,6 +70,7 @@ final class WakeUpManuallyScene: SKScene {
 
         let point = touch.location(in: self)
         let isFaceTap = faceHitboxNode.contains(convert(point, to: faceHitboxNode.parent ?? self))
+        if isFaceTap { playTapSound() }
         let result = validator.registerTap(isFaceTap: isFaceTap, time: currentSceneTime)
         handleWakeUpFaceTapResult(result, tapLocation: point)
     }
@@ -171,7 +172,7 @@ final class WakeUpManuallyScene: SKScene {
         let hitboxWidth = size.width * 0.52
         let hitboxHeight = size.height * 0.26
         faceHitboxNode = SKShapeNode(rectOf: CGSize(width: hitboxWidth, height: hitboxHeight), cornerRadius: 28)
-        faceHitboxNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.50)
+        faceHitboxNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.40)
         faceHitboxNode.fillColor = .clear
         faceHitboxNode.strokeColor = .clear
         faceHitboxNode.lineWidth = 0

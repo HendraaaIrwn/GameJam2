@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class RestoreBrokenCityMapScene: SKScene {
+class RestoreBrokenCityMapScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -67,6 +67,7 @@ final class RestoreBrokenCityMapScene: SKScene {
 
         guard let fragmentType, let fragmentNode = fragmentNodes[fragmentType], !placedFragments.contains(fragmentType) else { return }
         if let result = validator.beginDrag(target: target, fragmentType: fragmentType, startPoint: touchPoint, time: currentSceneTime) {
+            playTapSound()
             draggingFragmentNode = fragmentNode
             draggingFragmentType = fragmentType
             dragOffset = CGPoint(x: fragmentNode.position.x - touchPoint.x, y: fragmentNode.position.y - touchPoint.y)

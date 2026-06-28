@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class RejectAutoRoutineScene: SKScene {
+class RejectAutoRoutineScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -95,6 +95,7 @@ final class RejectAutoRoutineScene: SKScene {
         }
 
         if let card = routineCard(at: location) {
+            playTapSound()
             dragStartPoint = location
             draggedCard = card
             cardStartPosition = card.position

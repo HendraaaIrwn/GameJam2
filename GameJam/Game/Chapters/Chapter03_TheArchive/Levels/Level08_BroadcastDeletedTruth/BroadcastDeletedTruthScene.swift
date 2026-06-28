@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class BroadcastDeletedTruthScene: SKScene {
+class BroadcastDeletedTruthScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -71,12 +71,14 @@ final class BroadcastDeletedTruthScene: SKScene {
         print("Broadcast step:", validator.currentStep.rawValue)
 
         if let result = validator.validateTap(target: target, time: currentSceneTime) {
+            playTapSound()
             print("Archive broadcast validation result:", result)
             handleArchiveBroadcastResult(result)
             return
         }
 
         if let result = validator.beginTouch(target: target, startPoint: point, time: currentSceneTime) {
+            playTapSound()
             isHoldingSwitch = true
             handleArchiveBroadcastResult(result)
             return

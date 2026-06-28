@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class FindOldTransitSwitchScene: SKScene {
+class FindOldTransitSwitchScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -72,6 +72,7 @@ final class FindOldTransitSwitchScene: SKScene {
             isDraggingScanner = scannerNode.contains(point) || target == .empty
         }
         if let result = validator.validateTap(target: target, isSwitchRevealed: isManualSwitchRevealed, time: currentSceneTime) {
+            playTapSound()
             handleTransitSwitchResult(result)
         }
     }

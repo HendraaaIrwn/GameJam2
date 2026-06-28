@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class ReconnectArchiveCablesScene: SKScene {
+class ReconnectArchiveCablesScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -63,6 +63,7 @@ final class ReconnectArchiveCablesScene: SKScene {
         print("Tapped target:", target.rawValue)
 
         if let result = validator.validateTap(target: target, time: currentSceneTime) {
+            playTapSound()
             print("Archive cable validation result:", result)
             handleArchiveCableResult(result)
             return

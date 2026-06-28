@@ -1,7 +1,7 @@
 import SpriteKit
 
 @MainActor
-final class ManualBridgeBalanceScene: SKScene {
+class ManualBridgeBalanceScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -56,6 +56,7 @@ final class ManualBridgeBalanceScene: SKScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard stateMachine.canAcceptInput, let point = touches.first?.location(in: self) else { return }
+        playTapSound()
         touchStartPoint = point
         if let result = validator.validateTrap(target: bridgeTrapTarget(at: point), time: event?.timestamp ?? 0) {
             handleValidationResult(result)

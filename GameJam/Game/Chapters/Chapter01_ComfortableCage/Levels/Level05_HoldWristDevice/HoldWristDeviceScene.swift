@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class HoldWristDeviceScene: SKScene {
+class HoldWristDeviceScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -91,6 +91,7 @@ final class HoldWristDeviceScene: SKScene {
 
         let didStartOnWrist = wristHitboxNode.contains(convert(location, to: wristHitboxNode.parent ?? self))
         if didStartOnWrist {
+            playTapSound()
             print("Touched wrist device")
         }
 

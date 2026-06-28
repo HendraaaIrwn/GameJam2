@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class WalkAgainstCrowdScene: SKScene {
+class WalkAgainstCrowdScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -68,6 +68,7 @@ final class WalkAgainstCrowdScene: SKScene {
         let target = crowdTarget(at: startPoint)
         print("Tapped target:", target)
         if let result = validator.validateTap(target: target, time: currentSceneTime) {
+            playTapSound()
             handleCrowdResult(result)
         }
     }

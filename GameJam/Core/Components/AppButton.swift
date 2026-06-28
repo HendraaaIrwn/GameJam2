@@ -1,3 +1,4 @@
+import AVFoundation
 import SwiftUI
 
 struct AppButton: View {
@@ -22,7 +23,10 @@ struct AppButton: View {
     }
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            AppButtonSoundPlayer.play()
+            action()
+        } label: {
             HStack(spacing: height * 0.32) {
                 if let systemImage {
                     Image(systemName: systemImage)
@@ -42,6 +46,31 @@ struct AppButton: View {
         }
         .buttonStyle(AppButtonStyle())
         .accessibilityLabel(title)
+    }
+}
+
+private enum AppButtonSoundPlayer {
+    private static var player: AVAudioPlayer?
+
+    static func play() {
+        if player == nil {
+            guard let url = Bundle.main.url(forResource: "buttonSound", withExtension: "mp3") else {
+                print("AppButton sound not found")
+                return
+            }
+
+            do {
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.volume = 0.85
+                player?.prepareToPlay()
+            } catch {
+                print("Failed to load AppButton sound:", error)
+                return
+            }
+        }
+
+        player?.currentTime = 0
+        player?.play()
     }
 }
 

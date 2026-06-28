@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class FinalApartmentChoiceScene: SKScene {
+class FinalApartmentChoiceScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -72,6 +72,7 @@ final class FinalApartmentChoiceScene: SKScene {
         print("Resolved final choice:", choice)
 
         guard let result = validator.validateTap(button: choice, time: currentSceneTime) else { return }
+        playTapSound()
         print("Validation result:", result)
         handleValidationResult(result)
     }
