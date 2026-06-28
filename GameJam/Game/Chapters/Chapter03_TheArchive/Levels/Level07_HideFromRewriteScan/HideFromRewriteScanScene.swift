@@ -265,14 +265,14 @@ final class HideFromRewriteScanScene: SKScene {
     }
 
     private func addFeedbackAndTimer() {
-        progressLabel.fontName = "AvenirNext-Heavy"
+        progressLabel.fontName = GameFont.heavy
         progressLabel.fontSize = 13
         progressLabel.fontColor = .manualYellow
         progressLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.685)
         progressLabel.zPosition = 80
         addChild(progressLabel)
 
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 14
         feedbackLabel.fontColor = .cream
         feedbackLabel.horizontalAlignmentMode = .center
@@ -452,7 +452,7 @@ final class HideFromRewriteScanScene: SKScene {
 
     private func makeLabel(_ text: String, _ size: CGFloat, _ color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.horizontalAlignmentMode = .center

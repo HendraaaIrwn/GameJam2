@@ -257,14 +257,14 @@ final class Chapter03ToChapter04TransitionScene: SKScene {
         dialogueBox.zPosition = 30
         addChild(dialogueBox)
 
-        speakerLabel.fontName = "AvenirNext-Heavy"
+        speakerLabel.fontName = GameFont.heavy
         speakerLabel.fontSize = 15
         speakerLabel.fontColor = .manualYellow
         speakerLabel.horizontalAlignmentMode = .left
         speakerLabel.position = CGPoint(x: -150, y: 22)
         dialogueBox.addChild(speakerLabel)
 
-        dialogueLabel.fontName = "AvenirNext-DemiBold"
+        dialogueLabel.fontName = GameFont.regular
         dialogueLabel.fontSize = 15
         dialogueLabel.fontColor = .white
         dialogueLabel.horizontalAlignmentMode = .left
@@ -304,7 +304,7 @@ final class Chapter03ToChapter04TransitionScene: SKScene {
         subtitle.name = "subtitle"
         titleLayer.addChild(subtitle)
 
-        continueLabel.fontName = "AvenirNext-DemiBold"
+        continueLabel.fontName = GameFont.regular
         continueLabel.fontSize = 17
         continueLabel.fontColor = .manualYellow
         continueLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.22)
@@ -420,7 +420,7 @@ final class Chapter03ToChapter04TransitionScene: SKScene {
 
     private func makeLabel(_ text: String, size: CGFloat, color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.horizontalAlignmentMode = .center

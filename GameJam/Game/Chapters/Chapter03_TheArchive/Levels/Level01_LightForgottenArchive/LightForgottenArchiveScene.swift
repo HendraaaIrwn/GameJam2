@@ -168,7 +168,7 @@ final class LightForgottenArchiveScene: SKScene {
         let aiTitle = makeLabel("MOTHERGRID", 12, .white)
         aiTitle.position = CGPoint(x: 0, y: 22)
         aiWallScreenNode.addChild(aiTitle)
-        aiFaceLabel.fontName = "AvenirNext-Heavy"
+        aiFaceLabel.fontName = GameFont.heavy
         aiFaceLabel.fontSize = 32
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -183,7 +183,7 @@ final class LightForgottenArchiveScene: SKScene {
         commandCard.zPosition = 8
         addChild(commandCard)
         commandLabel.text = "Return to lit areas.\nDarkness reduces safety."
-        commandLabel.fontName = "AvenirNext-Heavy"
+        commandLabel.fontName = GameFont.heavy
         commandLabel.fontSize = 17
         commandLabel.fontColor = .happyBlue
         commandLabel.numberOfLines = 2
@@ -303,7 +303,7 @@ final class LightForgottenArchiveScene: SKScene {
     }
 
     private func addFeedbackAndTimer() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 18
         feedbackLabel.fontColor = .manualYellow
         feedbackLabel.numberOfLines = 2
@@ -407,7 +407,7 @@ final class LightForgottenArchiveScene: SKScene {
 
     private func makeLabel(_ text: String, _ size: CGFloat, _ color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.horizontalAlignmentMode = .center

@@ -134,7 +134,7 @@ final class Chapter02ToChapter03TransitionScene: SKScene {
         let name = makeLabel("MOTHERGRID", size: 12, color: .white)
         name.position = CGPoint(x: 0, y: 24)
         mothergridNode.addChild(name)
-        mothergridFace.fontName = "AvenirNext-Heavy"
+        mothergridFace.fontName = GameFont.heavy
         mothergridFace.fontSize = 42
         mothergridFace.fontColor = .white
         mothergridFace.verticalAlignmentMode = .center
@@ -276,7 +276,7 @@ final class Chapter02ToChapter03TransitionScene: SKScene {
             archiveDoor.addChild(monitor)
         }
 
-        monitorText.fontName = "AvenirNext-Heavy"
+        monitorText.fontName = GameFont.heavy
         monitorText.fontSize = 11
         monitorText.fontColor = .manualYellow
         monitorText.numberOfLines = 2
@@ -294,14 +294,14 @@ final class Chapter02ToChapter03TransitionScene: SKScene {
         dialogueBox.zPosition = 30
         addChild(dialogueBox)
 
-        speakerLabel.fontName = "AvenirNext-Heavy"
+        speakerLabel.fontName = GameFont.heavy
         speakerLabel.fontSize = 15
         speakerLabel.fontColor = .manualYellow
         speakerLabel.horizontalAlignmentMode = .left
         speakerLabel.position = CGPoint(x: -150, y: 22)
         dialogueBox.addChild(speakerLabel)
 
-        dialogueLabel.fontName = "AvenirNext-DemiBold"
+        dialogueLabel.fontName = GameFont.regular
         dialogueLabel.fontSize = 15
         dialogueLabel.fontColor = .white
         dialogueLabel.horizontalAlignmentMode = .left
@@ -346,7 +346,7 @@ final class Chapter02ToChapter03TransitionScene: SKScene {
         novaLine.name = "nova_line"
         titleLayer.addChild(novaLine)
 
-        continueLabel.fontName = "AvenirNext-DemiBold"
+        continueLabel.fontName = GameFont.regular
         continueLabel.fontSize = 17
         continueLabel.fontColor = .manualYellow
         continueLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.22)
@@ -448,7 +448,7 @@ final class Chapter02ToChapter03TransitionScene: SKScene {
 
     private func makeLabel(_ text: String, size: CGFloat, color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.horizontalAlignmentMode = .center

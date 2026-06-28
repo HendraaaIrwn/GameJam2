@@ -104,7 +104,7 @@ final class WakeUpManuallyScene: SKScene {
         addChild(aiScreenNode)
 
         let face = SKLabelNode(text: "◡")
-        face.fontName = "AvenirNext-Bold"
+        face.fontName = GameFont.bold
         face.fontSize = 54
         face.fontColor = .white
         face.verticalAlignmentMode = .center
@@ -121,7 +121,7 @@ final class WakeUpManuallyScene: SKScene {
         addChild(card)
 
         let command = SKLabelNode(text: "Stay asleep.\nYour schedule has been optimized.")
-        command.fontName = "AvenirNext-DemiBold"
+        command.fontName = GameFont.regular
         command.fontSize = 18
         command.fontColor = .glitchPurple
         command.numberOfLines = 2
@@ -169,7 +169,7 @@ final class WakeUpManuallyScene: SKScene {
         headNode.zPosition = 5
         addChild(headNode)
 
-        eyesNode.fontName = "AvenirNext-Bold"
+        eyesNode.fontName = GameFont.bold
         eyesNode.fontSize = 18
         eyesNode.fontColor = .glitchPurple
         eyesNode.verticalAlignmentMode = .center
@@ -194,14 +194,14 @@ final class WakeUpManuallyScene: SKScene {
     }
 
     private func addProgressAndFeedback() {
-        progressLabel.fontName = "AvenirNext-Bold"
+        progressLabel.fontName = GameFont.bold
         progressLabel.fontSize = 22
         progressLabel.fontColor = .happyBlue
         progressLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.25)
         progressLabel.zPosition = 8
         addChild(progressLabel)
 
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 24
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.16)

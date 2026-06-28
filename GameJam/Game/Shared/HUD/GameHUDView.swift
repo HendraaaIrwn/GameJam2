@@ -11,9 +11,9 @@ struct GameHUDView: View {
         VStack(spacing: 12) {
             VStack(spacing: 4) {
                 Text("Don’t Trust The App")
-                    .font(.headline)
+                    .font(GameFont.swiftUI(18, weight: .bold))
                 Text(levelTitle)
-                    .font(.subheadline)
+                    .font(GameFont.swiftUI(15))
                     .foregroundStyle(.secondary)
             }
 
@@ -21,10 +21,10 @@ struct GameHUDView: View {
                 Label("Obedience \(score.obedience)", systemImage: "brain")
                 Label("Humanity \(score.humanity)", systemImage: "heart")
             }
-            .font(.caption)
+            .font(GameFont.swiftUI(12))
 
             Text(statusText)
-                .font(.callout.weight(.semibold))
+                .font(GameFont.swiftUI(16, weight: .semibold))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)

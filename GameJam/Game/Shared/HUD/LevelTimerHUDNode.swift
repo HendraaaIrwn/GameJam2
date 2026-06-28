@@ -46,7 +46,7 @@ final class LevelTimerHUDNode: SKNode {
     private func setup() {
         zPosition = 1000
 
-        titleLabel.fontName = "AvenirNext-Heavy"
+        titleLabel.fontName = GameFont.heavy
         titleLabel.fontSize = 12
         titleLabel.fontColor = .cream
         titleLabel.horizontalAlignmentMode = .left
@@ -55,7 +55,7 @@ final class LevelTimerHUDNode: SKNode {
         titleLabel.zPosition = 2
         addChild(titleLabel)
 
-        countdownLabel.fontName = "AvenirNext-Heavy"
+        countdownLabel.fontName = GameFont.heavy
         countdownLabel.fontSize = 16
         countdownLabel.fontColor = .cream
         countdownLabel.horizontalAlignmentMode = .right

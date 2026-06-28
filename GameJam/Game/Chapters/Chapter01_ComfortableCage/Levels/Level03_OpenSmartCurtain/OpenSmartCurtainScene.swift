@@ -191,7 +191,7 @@ final class OpenSmartCurtainScene: SKScene {
         aiScreenNode.zPosition = 2
         addChild(aiScreenNode)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 50
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -208,7 +208,7 @@ final class OpenSmartCurtainScene: SKScene {
         addChild(card)
 
         let command = SKLabelNode(text: "Do not open\nthe curtain.")
-        command.fontName = "AvenirNext-DemiBold"
+        command.fontName = GameFont.regular
         command.fontSize = 18
         command.fontColor = .happyBlue
         command.numberOfLines = 2
@@ -261,7 +261,7 @@ final class OpenSmartCurtainScene: SKScene {
         lightNode.zPosition = 4
         windowNode.addChild(lightNode)
 
-        lockLabel.fontName = "AvenirNext-Heavy"
+        lockLabel.fontName = GameFont.heavy
         lockLabel.fontSize = 36
         lockLabel.verticalAlignmentMode = .center
         lockLabel.alpha = 0
@@ -303,7 +303,7 @@ final class OpenSmartCurtainScene: SKScene {
         rakaNode.zPosition = 6
         addChild(rakaNode)
 
-        rakaEyesLabel.fontName = "AvenirNext-Bold"
+        rakaEyesLabel.fontName = GameFont.bold
         rakaEyesLabel.fontSize = 17
         rakaEyesLabel.fontColor = .black
         rakaEyesLabel.verticalAlignmentMode = .center
@@ -328,7 +328,7 @@ final class OpenSmartCurtainScene: SKScene {
         addChild(keepClosedButtonNode)
 
         let label = SKLabelNode(text: "KEEP CLOSED")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 17
         label.fontColor = .happyBlue
         label.verticalAlignmentMode = .center
@@ -336,7 +336,7 @@ final class OpenSmartCurtainScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 23
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.13)

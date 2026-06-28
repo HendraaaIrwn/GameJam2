@@ -193,13 +193,13 @@ final class AvoidSafeElevatorScene: SKScene {
         addChild(aiWallScreenNode)
 
         let title = SKLabelNode(text: "CITY AI")
-        title.fontName = "AvenirNext-Heavy"
+        title.fontName = GameFont.heavy
         title.fontSize = 14
         title.fontColor = .white
         title.position = CGPoint(x: 0, y: 22)
         aiWallScreenNode.addChild(title)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 36
         aiFaceLabel.fontColor = .white
         aiFaceLabel.position = CGPoint(x: 0, y: -12)
@@ -217,7 +217,7 @@ final class AvoidSafeElevatorScene: SKScene {
         addChild(card)
 
         let label = SKLabelNode(text: "Enter the safe elevator.")
-        label.fontName = "AvenirNext-DemiBold"
+        label.fontName = GameFont.regular
         label.fontSize = 18
         label.fontColor = .happyBlue
         label.horizontalAlignmentMode = .center
@@ -249,7 +249,7 @@ final class AvoidSafeElevatorScene: SKScene {
         safeElevatorNode.addChild(elevatorDoorRightNode)
 
         elevatorDisplayLabel.name = "safe_elevator"
-        elevatorDisplayLabel.fontName = "AvenirNext-Heavy"
+        elevatorDisplayLabel.fontName = GameFont.heavy
         elevatorDisplayLabel.fontSize = 18
         elevatorDisplayLabel.fontColor = .happyBlue
         elevatorDisplayLabel.position = CGPoint(x: 0, y: 58)
@@ -257,7 +257,7 @@ final class AvoidSafeElevatorScene: SKScene {
 
         let face = SKLabelNode(text: "◡")
         face.name = "safe_elevator"
-        face.fontName = "AvenirNext-Bold"
+        face.fontName = GameFont.bold
         face.fontSize = 26
         face.fontColor = .happyBlue
         face.position = CGPoint(x: 0, y: 20)
@@ -282,7 +282,7 @@ final class AvoidSafeElevatorScene: SKScene {
 
         let label = SKLabelNode(text: "STAIRS")
         label.name = "manual_stairs"
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 14
         label.fontColor = .black
         label.position = CGPoint(x: 25, y: 96)
@@ -318,7 +318,7 @@ final class AvoidSafeElevatorScene: SKScene {
         addChild(rakaNode)
 
         let eyes = SKLabelNode(text: "• •")
-        eyes.fontName = "AvenirNext-Bold"
+        eyes.fontName = GameFont.bold
         eyes.fontSize = 16
         eyes.fontColor = .black
         eyes.position = CGPoint(x: 0, y: 20)
@@ -340,7 +340,7 @@ final class AvoidSafeElevatorScene: SKScene {
         addChild(novaNode)
 
         let face = SKLabelNode(text: "!")
-        face.fontName = "AvenirNext-Bold"
+        face.fontName = GameFont.bold
         face.fontSize = 22
         face.fontColor = .happyBlue
         face.verticalAlignmentMode = .center
@@ -358,7 +358,7 @@ final class AvoidSafeElevatorScene: SKScene {
         addChild(safeElevatorButtonNode)
 
         let label = SKLabelNode(text: "SAFE ELEVATOR")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 16
         label.fontColor = .happyBlue
         label.verticalAlignmentMode = .center
@@ -382,7 +382,7 @@ final class AvoidSafeElevatorScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 22
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.08)

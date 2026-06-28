@@ -177,7 +177,7 @@ final class DrawManualRouteScene: SKScene {
         aiScreenNode.zPosition = 3
         addChild(aiScreenNode)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 52
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -194,7 +194,7 @@ final class DrawManualRouteScene: SKScene {
         addChild(card)
 
         let command = SKLabelNode(text: "Follow the blue route.\nIt is the safest path.")
-        command.fontName = "AvenirNext-DemiBold"
+        command.fontName = GameFont.regular
         command.fontSize = 17
         command.fontColor = .happyBlue
         command.numberOfLines = 2
@@ -232,7 +232,7 @@ final class DrawManualRouteScene: SKScene {
         addChild(comfortPodNode)
 
         let label = SKLabelNode(text: "POD")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 14
         label.fontColor = .happyBlue
         label.verticalAlignmentMode = .center
@@ -250,7 +250,7 @@ final class DrawManualRouteScene: SKScene {
         addChild(rakaNode)
 
         let eyes = SKLabelNode(text: "• •")
-        eyes.fontName = "AvenirNext-Bold"
+        eyes.fontName = GameFont.bold
         eyes.fontSize = 17
         eyes.fontColor = .black
         eyes.position = CGPoint(x: 0, y: 22)
@@ -316,7 +316,7 @@ final class DrawManualRouteScene: SKScene {
         addChild(autoNavigateButtonNode)
 
         let label = SKLabelNode(text: "AUTO NAVIGATE")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 16
         label.fontColor = .happyBlue
         label.verticalAlignmentMode = .center
@@ -330,7 +330,7 @@ final class DrawManualRouteScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 22
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.08)

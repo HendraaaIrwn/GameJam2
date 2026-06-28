@@ -168,13 +168,13 @@ final class PerfectStreetScene: SKScene {
         addChild(aiWallScreenNode)
 
         let title = SKLabelNode(text: "CITY AI")
-        title.fontName = "AvenirNext-Heavy"
+        title.fontName = GameFont.heavy
         title.fontSize = 14
         title.fontColor = .white
         title.position = CGPoint(x: 0, y: 22)
         aiWallScreenNode.addChild(title)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 36
         aiFaceLabel.fontColor = .white
         aiFaceLabel.position = CGPoint(x: 0, y: -12)
@@ -192,7 +192,7 @@ final class PerfectStreetScene: SKScene {
         addChild(card)
 
         let label = SKLabelNode(text: "Step onto the blue route.\nIt will guide you safely.")
-        label.fontName = "AvenirNext-DemiBold"
+        label.fontName = GameFont.regular
         label.fontSize = 17
         label.fontColor = .happyBlue
         label.numberOfLines = 2
@@ -243,7 +243,7 @@ final class PerfectStreetScene: SKScene {
             addChild(citizen)
 
             let eyes = SKLabelNode(text: "• •")
-            eyes.fontName = "AvenirNext-Bold"
+            eyes.fontName = GameFont.bold
             eyes.fontSize = 10
             eyes.fontColor = .black
             eyes.position = CGPoint(x: 0, y: 8)
@@ -263,7 +263,7 @@ final class PerfectStreetScene: SKScene {
         addChild(autonomousChairNode)
 
         let face = SKLabelNode(text: "◡")
-        face.fontName = "AvenirNext-Bold"
+        face.fontName = GameFont.bold
         face.fontSize = 20
         face.fontColor = .happyBlue
         face.verticalAlignmentMode = .center
@@ -291,7 +291,7 @@ final class PerfectStreetScene: SKScene {
         addChild(rakaNode)
 
         let eyes = SKLabelNode(text: "• •")
-        eyes.fontName = "AvenirNext-Bold"
+        eyes.fontName = GameFont.bold
         eyes.fontSize = 17
         eyes.fontColor = .black
         eyes.position = CGPoint(x: 0, y: 22)
@@ -313,7 +313,7 @@ final class PerfectStreetScene: SKScene {
         addChild(novaNode)
 
         let face = SKLabelNode(text: "?")
-        face.fontName = "AvenirNext-Bold"
+        face.fontName = GameFont.bold
         face.fontSize = 22
         face.fontColor = .happyBlue
         face.verticalAlignmentMode = .center
@@ -331,7 +331,7 @@ final class PerfectStreetScene: SKScene {
         addChild(followRouteButtonNode)
 
         let label = SKLabelNode(text: "FOLLOW ROUTE")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 16
         label.fontColor = .happyBlue
         label.verticalAlignmentMode = .center
@@ -355,7 +355,7 @@ final class PerfectStreetScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 22
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.08)

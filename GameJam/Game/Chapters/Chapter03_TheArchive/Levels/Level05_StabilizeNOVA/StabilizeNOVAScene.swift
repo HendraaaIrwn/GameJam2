@@ -137,7 +137,7 @@ final class StabilizeNOVAScene: SKScene {
         let title = makeLabel("MOTHERGRID", 12, .white)
         title.position = CGPoint(x: 0, y: 21)
         aiWallScreenNode.addChild(title)
-        aiFaceLabel.fontName = "AvenirNext-Heavy"
+        aiFaceLabel.fontName = GameFont.heavy
         aiFaceLabel.fontSize = 30
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -200,7 +200,7 @@ final class StabilizeNOVAScene: SKScene {
         addChild(resetNOVAButtonNode)
         resetNOVAButtonNode.addChild(makeLabel("RESET NOVA", 13, .white))
 
-        progressLabel.fontName = "AvenirNext-Heavy"
+        progressLabel.fontName = GameFont.heavy
         progressLabel.fontSize = 18
         progressLabel.fontColor = .manualYellow
         progressLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.335)
@@ -238,7 +238,7 @@ final class StabilizeNOVAScene: SKScene {
         novaNode.glowWidth = 10
         novaNode.zPosition = 20
         addChild(novaNode)
-        novaFaceLabel.fontName = "AvenirNext-Heavy"
+        novaFaceLabel.fontName = GameFont.heavy
         novaFaceLabel.fontSize = 12
         novaFaceLabel.fontColor = .glitchPurple
         novaFaceLabel.verticalAlignmentMode = .center
@@ -259,7 +259,7 @@ final class StabilizeNOVAScene: SKScene {
     }
 
     private func addFeedbackAndTimer() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 17
         feedbackLabel.fontColor = .manualYellow
         feedbackLabel.numberOfLines = 2
@@ -396,7 +396,7 @@ final class StabilizeNOVAScene: SKScene {
 
     private func makeLabel(_ text: String, _ size: CGFloat, _ color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.horizontalAlignmentMode = .center

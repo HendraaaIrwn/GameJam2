@@ -175,7 +175,7 @@ final class HoldWristDeviceScene: SKScene {
         aiScreenNode.zPosition = 2
         addChild(aiScreenNode)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 52
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -192,7 +192,7 @@ final class HoldWristDeviceScene: SKScene {
         addChild(card)
 
         let command = SKLabelNode(text: "Release your wrist.\nManual signal is unsafe.")
-        command.fontName = "AvenirNext-DemiBold"
+        command.fontName = GameFont.regular
         command.fontSize = 17
         command.fontColor = .happyBlue
         command.numberOfLines = 2
@@ -212,7 +212,7 @@ final class HoldWristDeviceScene: SKScene {
         addChild(rakaNode)
 
         let eyes = SKLabelNode(text: "• •")
-        eyes.fontName = "AvenirNext-Bold"
+        eyes.fontName = GameFont.bold
         eyes.fontSize = 20
         eyes.fontColor = .black
         eyes.position = CGPoint(x: 0, y: 34)
@@ -277,7 +277,7 @@ final class HoldWristDeviceScene: SKScene {
         addChild(novaNode)
 
         let face = SKLabelNode(text: "◡")
-        face.fontName = "AvenirNext-Bold"
+        face.fontName = GameFont.bold
         face.fontSize = 26
         face.fontColor = .happyBlue
         face.verticalAlignmentMode = .center
@@ -295,7 +295,7 @@ final class HoldWristDeviceScene: SKScene {
         addChild(releaseButtonNode)
 
         let label = SKLabelNode(text: "RELEASE")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 18
         label.fontColor = .happyBlue
         label.verticalAlignmentMode = .center
@@ -303,7 +303,7 @@ final class HoldWristDeviceScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 23
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.12)
