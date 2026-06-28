@@ -117,7 +117,7 @@ enum ActiveLevel {
     var novaCommand: String {
         switch self {
         case .wakeUpManually:
-            "Please wait for automatic wake-up authorization."
+            "Do not disturb Raka, Automatic Wake up Routine activated."
         case .rejectAutoRoutine:
             "Follow the approved morning routine."
         case .openSmartCurtain:

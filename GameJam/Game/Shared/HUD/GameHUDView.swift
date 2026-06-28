@@ -10,29 +10,34 @@ struct GameHUDView: View {
     let retry: () -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .top) {
-                chapterLevelView
-                Spacer()
-                scoreView
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 6)
-            
-            novaInstructionPanel
-                .padding(.horizontal, 12)
+        ZStack {
+            VStack(spacing: 0) {
+                HStack(alignment: .top) {
+                    chapterLevelView
+                    Spacer()
+                    scoreView
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 6)
+                
+                novaInstructionPanel
+                    .padding(.horizontal, 12)
+                    .offset(y: -24)
 
-            Spacer()
+                Spacer()
+            }
+            .foregroundStyle(AppColor.textOnDark)
+            .accessibilityElement(children: .contain)
 
             if canRetry {
-                Button("Retry Level", action: retry)
-                    .buttonStyle(.borderedProminent)
-                    .padding(.bottom, 24)
+                Color.black.opacity(0.65)
+                    .ignoresSafeArea()
+
+                AppButton("RETRY", systemImage: "arrow.clockwise", height: 56, fontSize: 22, action: retry)
+                    .frame(maxWidth: 240)
                     .accessibilityHint("Starts the current level again")
             }
         }
-        .foregroundStyle(.white)
-        .accessibilityElement(children: .contain)
     }
 
     private var chapterLevelView: some View {
@@ -41,7 +46,7 @@ struct GameHUDView: View {
             Text("LEVEL \(levelNumber)")
         }
         .font(.custom(GameFont.heavy, size: 18))
-        .foregroundStyle(.cyan)
+        .foregroundStyle(AppColor.obedience)
 //        .shadow(radius: 2)
     }
 
@@ -51,7 +56,7 @@ struct GameHUDView: View {
             Text("HUMANITY \(score.humanity)")
         }
         .font(.custom(GameFont.heavy, size: 18))
-        .foregroundStyle(.cyan)
+        .foregroundStyle(AppColor.obedience)
 //        .shadow(radius: 2)
     }
 
@@ -62,7 +67,7 @@ struct GameHUDView: View {
                 .scaledToFit()
 
             NovaTerminalInstructionText(text: novaInstruction)
-                .padding(.top, 40)
+                .padding(.top, 46)
 //                .shadow(color: .black.opacity(0.8), radius: 2, y: 1)
         }
         .frame(maxWidth: 360)
@@ -79,7 +84,7 @@ private struct NovaTerminalInstructionText: View {
 
     var body: some View {
         Text(visibleText)
-            .font(.custom(GameFont.pixelifySans, size: 22))
+            .font(.custom(GameFont.pixelifySans, size: 20))
             .foregroundStyle(.red)
             .multilineTextAlignment(.center)
             .lineLimit(4)

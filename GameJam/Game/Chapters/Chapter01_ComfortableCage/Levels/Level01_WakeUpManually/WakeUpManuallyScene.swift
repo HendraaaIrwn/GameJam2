@@ -6,7 +6,7 @@ final class WakeUpManuallyScene: SKScene {
     private let stateMachine = LevelStateMachine()
     private let validator = WakeUpTapValidator()
     private let timerController = LevelTimerController(totalDuration: WakeUpManuallyLevelConfig.totalTimeLimit)
-    private let timerHUD = LevelTimerHUDNode(width: 260, height: 14)
+    private let timerHUD = LevelTimerHUDNode(width: 360, height: 24)
 
     private var currentSceneTime: TimeInterval = 0
     private var hasSentResult = false
@@ -16,7 +16,6 @@ final class WakeUpManuallyScene: SKScene {
     private let requiredTaps = WakeUpManuallyLevelConfig.requiredWakeTaps
 
     private let bedNode = SKSpriteNode(imageNamed: "bed_background")
-    private let rakaCropNode = SKCropNode()
     private let sleepingRakaNode = SKSpriteNode(imageNamed: "raka_sleeping")
     private let awakeRakaNode = SKSpriteNode(imageNamed: "raka_awake")
     private let pillowNode = SKShapeNode()
@@ -77,7 +76,7 @@ final class WakeUpManuallyScene: SKScene {
 
     private func setupScene() {
         removeAllChildren()
-        backgroundColor = .pastelCyan
+        backgroundColor = SKColor.init(hex: 0xB1DFE7)
         addBedBackground()
         addRakaHalfBody()
         addFaceHitbox()
@@ -86,10 +85,12 @@ final class WakeUpManuallyScene: SKScene {
     }
 
     private func addBedBackground() {
-        bedNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.30)
+        bedNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.43)
         bedNode.zPosition = 5
-        let bedScale = bedNode.size.width > 0 ? (size.width * 0.95) / bedNode.size.width : 1
-        bedNode.setScale(bedScale)
+        let bedScaleWidth = bedNode.size.width > 0 ? (size.width * 1.1) / bedNode.size.width : 1
+        let bedScaleHeight = bedNode.size.height > 0 ? (size.height * 0.4) / bedNode.size.height : 1
+        bedNode.xScale = bedScaleWidth
+        bedNode.yScale = bedScaleHeight
         addChild(bedNode)
     }
 
@@ -122,34 +123,17 @@ final class WakeUpManuallyScene: SKScene {
     }
 
     private func addRakaHalfBody() {
-        rakaCropNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.38)
-        rakaCropNode.zPosition = 20
-
         let scaleTarget = size.height * 0.48
         let scaleFactor = (sleepingRakaNode.size.height > 0) ? (scaleTarget / sleepingRakaNode.size.height) : 1.0
-        baseRakaScale = scaleFactor
+        baseRakaScale = scaleFactor * 1.4
 
         for node in [sleepingRakaNode, awakeRakaNode] {
-            node.setScale(scaleFactor)
-            node.position = .zero
-            rakaCropNode.addChild(node)
+            node.setScale(baseRakaScale)
+            node.position = CGPoint(x: size.width * 0.5, y: size.height * 0.32)
+            node.zPosition = 20
+            addChild(node)
         }
         awakeRakaNode.isHidden = true
-
-        let renderedHeight = sleepingRakaNode.size.height * baseRakaScale
-        let renderedWidth = sleepingRakaNode.size.width * baseRakaScale
-
-        let cropFraction: CGFloat = 0.58
-        let maskHeight = renderedHeight * cropFraction
-        let maskCenterY = (renderedHeight / 2) - (maskHeight / 2)
-
-        let maskNode = SKShapeNode(rectOf: CGSize(width: renderedWidth + 40, height: maskHeight))
-        maskNode.fillColor = .white
-        maskNode.strokeColor = .clear
-        maskNode.position = CGPoint(x: 0, y: maskCenterY)
-        rakaCropNode.maskNode = maskNode
-
-        addChild(rakaCropNode)
 
         sleepingRakaNode.run(.repeatForever(.sequence([
             .scale(to: baseRakaScale * 0.985, duration: 2.0),
@@ -158,7 +142,7 @@ final class WakeUpManuallyScene: SKScene {
     }
 
     private func addPillow() {
-        let pillowWidth = size.width * 0.78
+        let pillowWidth = size.width * 0.95
         let pillowHeight = size.height * 0.08
         pillowNode.path = CGPath(roundedRect: CGRect(
             x: -pillowWidth / 2, y: -pillowHeight / 2,
@@ -202,13 +186,14 @@ final class WakeUpManuallyScene: SKScene {
         let spacing: CGFloat = 13
         let totalWidth = CGFloat(requiredTaps) * (dotRadius * 2 + spacing) - spacing
         let startX = size.width / 2 - totalWidth / 2
-        let dotY: CGFloat = size.height * 0.12
+        let dotY: CGFloat = size.height * 0.1
 
         for i in 0 ..< requiredTaps {
             let dot = SKShapeNode(circleOfRadius: dotRadius)
             dot.position = CGPoint(x: startX + CGFloat(i) * (dotRadius * 2 + spacing) + dotRadius, y: dotY)
             dot.fillColor = .clear
-            dot.strokeColor = .manualYellow.withAlphaComponent(0.5)
+//            dot.strokeColor = .manualYellow.withAlphaComponent(0.5)
+            dot.strokeColor = .appManualOrange.withAlphaComponent(0.5)
             dot.lineWidth = 3
             dot.zPosition = 80
             dot.name = "progress_dot_\(i)"
@@ -221,11 +206,11 @@ final class WakeUpManuallyScene: SKScene {
         feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 22
         feedbackLabel.fontColor = .glitchPurple
-        feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.16)
+        feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.66)
         feedbackLabel.zPosition = 80
         addChild(feedbackLabel)
 
-        timerHUD.position = CGPoint(x: size.width / 2, y: 72)
+        timerHUD.position = CGPoint(x: size.width / 2, y: 54)
         timerHUD.zPosition = 1000
         addChild(timerHUD)
     }
@@ -337,13 +322,10 @@ final class WakeUpManuallyScene: SKScene {
         sleepingRakaNode.removeAction(forKey: "rakaBreathing")
         sleepingRakaNode.isHidden = true
         awakeRakaNode.isHidden = false
-        awakeRakaNode.run(.sequence([
-            .scale(to: baseRakaScale * 1.08, duration: 0.15),
-            .scale(to: baseRakaScale * 0.96, duration: 0.12),
-            .scale(to: baseRakaScale, duration: 0.10),
-            .smallBounce(),
-            .run { [weak self] in self?.triggerSuccess() }
-        ]))
+       awakeRakaNode.run(.sequence([
+           .wait(forDuration: 0.25),
+           .run { [weak self] in self?.triggerSuccess() }
+       ]))
     }
 
     private func triggerSuccess() {
