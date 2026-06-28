@@ -116,7 +116,6 @@ final class ReconnectArchiveCablesScene: SKScene {
 
         addBackground()
         addAIHeader()
-        addCommandCard()
         addPortsAndAntenna()
         addCables()
         addCharacters()

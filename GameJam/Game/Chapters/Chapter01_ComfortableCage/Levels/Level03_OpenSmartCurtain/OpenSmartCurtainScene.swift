@@ -143,7 +143,6 @@ final class OpenSmartCurtainScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addTimerHUD()
         addWindowAndCity()
         addRaka()

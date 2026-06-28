@@ -6,6 +6,7 @@ enum GameFont {
     static let bold = "LondrinaSolid-Black"
     static let light = "LondrinaSolid-Light"
     static let thin = "LondrinaSolid-Thin"
+    static let pixelifySans = "PixelifySans-Regular"
 
     static func swiftUI(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
         switch weight {

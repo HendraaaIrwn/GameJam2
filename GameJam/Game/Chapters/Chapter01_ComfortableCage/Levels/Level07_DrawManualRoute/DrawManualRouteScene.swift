@@ -121,7 +121,6 @@ final class DrawManualRouteScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addDoor()
         addComfortPod()
         addRaka()

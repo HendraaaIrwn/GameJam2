@@ -126,7 +126,6 @@ final class HoldWristDeviceScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addTimerHUD()
         addRakaAndWrist()
         addNova()

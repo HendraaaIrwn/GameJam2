@@ -34,7 +34,6 @@ final class FindOldTransitSwitchScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addTransitDoorAndPanel()
         addButtonsAndSwitches()
         addScanner()

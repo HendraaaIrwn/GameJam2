@@ -32,7 +32,6 @@ final class EnterManualTunnelScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addTunnelAndCityZones()
         addRakaNova()
         addFeedback()

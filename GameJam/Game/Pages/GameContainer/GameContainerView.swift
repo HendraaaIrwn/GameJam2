@@ -13,9 +13,10 @@ struct GameContainerView: View {
                     .ignoresSafeArea()
 
                 GameHUDView(
-                    levelTitle: viewModel.levelTitle,
+                    chapterNumber: viewModel.chapterNumber,
+                    levelNumber: viewModel.levelNumber,
                     score: viewModel.score,
-                    statusText: viewModel.statusText,
+                    novaInstruction: viewModel.novaInstruction,
                     canRetry: viewModel.canRetry,
                     retry: viewModel.retry
                 )

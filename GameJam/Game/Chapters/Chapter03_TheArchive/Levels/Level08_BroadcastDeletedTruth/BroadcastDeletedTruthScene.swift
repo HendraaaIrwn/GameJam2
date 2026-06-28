@@ -125,7 +125,6 @@ final class BroadcastDeletedTruthScene: SKScene {
 
         addBackground()
         addAIHeader()
-        addCommandCard()
         addTerminal()
         addControls()
         addPreviewAndCharacters()

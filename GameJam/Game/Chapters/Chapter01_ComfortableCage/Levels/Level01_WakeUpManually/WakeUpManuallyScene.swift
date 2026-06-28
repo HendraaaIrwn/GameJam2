@@ -4,30 +4,39 @@ final class WakeUpManuallyScene: SKScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
-    private let validator = TapSequenceValidator()
-    private let timerController = LevelTimerController(totalDuration: 8.0)
+    private let validator = WakeUpTapValidator()
+    private let timerController = LevelTimerController(totalDuration: WakeUpManuallyLevelConfig.totalTimeLimit)
     private let timerHUD = LevelTimerHUDNode(width: 260, height: 14)
 
     private var currentSceneTime: TimeInterval = 0
     private var hasSentResult = false
     private var hasLoggedTimerWarning = false
+    private var hintShown = false
 
-    private let aiScreenNode = SKShapeNode(rectOf: .zero)
-    private let blanketNode = SKShapeNode(rectOf: .zero)
-    private let bodyNode = SKShapeNode(rectOf: .zero)
-    private let headNode = SKShapeNode(circleOfRadius: 1)
-    private let wristNode = SKShapeNode(circleOfRadius: 1)
-    private let eyesNode = SKLabelNode(text: "– –")
-    private let progressLabel = SKLabelNode(text: "0 / 4")
+    private let requiredTaps = WakeUpManuallyLevelConfig.requiredWakeTaps
+
+    private let bedNode = SKSpriteNode(imageNamed: "bed_background")
+    private let rakaCropNode = SKCropNode()
+    private let sleepingRakaNode = SKSpriteNode(imageNamed: "raka_sleeping")
+    private let awakeRakaNode = SKSpriteNode(imageNamed: "raka_awake")
+    private let pillowNode = SKShapeNode()
+    private let mattressNode = SKShapeNode()
+    private let floorNode = SKShapeNode()
+
+    private var progressDots: [SKShapeNode] = []
     private let feedbackLabel = SKLabelNode(text: "")
+    private var faceHitboxNode: SKShapeNode!
+    private var baseRakaScale: CGFloat = 1.0
 
     override func didMove(to view: SKView) {
+        print("WakeUpManuallyScene aligned with Chapter 1 style")
         setupScene()
         stateMachine.reset()
         validator.reset()
         timerController.reset()
         hasSentResult = false
         hasLoggedTimerWarning = false
+        hintShown = false
     }
 
     override func update(_ currentTime: TimeInterval) {
@@ -38,7 +47,6 @@ final class WakeUpManuallyScene: SKScene {
             timerController.start(at: currentTime)
             timerHUD.update(with: timerController.update(currentTime: currentTime))
             stateMachine.transition(to: .playing)
-            print("Timer started for level:", "chapter1.level1.wake-up-manually")
             return
         }
 
@@ -46,241 +54,335 @@ final class WakeUpManuallyScene: SKScene {
 
         let timerState = timerController.update(currentTime: currentTime)
         timerHUD.update(with: timerState)
-        logTimerWarningIfNeeded(timerState, levelId: "chapter1.level1.wake-up-manually")
+        logTimerWarningIfNeeded(timerState, levelId: WakeUpManuallyLevelConfig.levelId)
+        showHintIfNeeded(timerState)
+
         if timerState.hasExpired {
-            print("Timer expired:", "chapter1.level1.wake-up-manually")
-            triggerFailure()
+            handleWakeUpFaceTapResult(.totalTimeout, tapLocation: .zero)
             return
         }
 
-        guard let timeout = validator.checkTimeouts(currentTime: currentTime) else { return }
-        handleValidationResult(timeout)
+        guard let timeoutResult = validator.checkTimeouts(currentTime: currentTime) else { return }
+        handleWakeUpFaceTapResult(timeoutResult, tapLocation: .zero)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard stateMachine.canAcceptInput, let touch = touches.first else { return }
 
-        let zone = tapZone(at: touch.location(in: self))
-        let result = validator.registerTap(zone: zone, time: currentSceneTime)
-        handleValidationResult(result)
+        let point = touch.location(in: self)
+        let isFaceTap = faceHitboxNode.contains(convert(point, to: faceHitboxNode.parent ?? self))
+        let result = validator.registerTap(isFaceTap: isFaceTap, time: currentSceneTime)
+        handleWakeUpFaceTapResult(result, tapLocation: point)
     }
 
     private func setupScene() {
         removeAllChildren()
         backgroundColor = .pastelCyan
-
-        addBackground()
-        addAIScreen()
-        addCommandCard()
-        addTimerHUD()
-        addBedAndRaka()
-        addProgressAndFeedback()
+        addBedBackground()
+        addRakaHalfBody()
+        addFaceHitbox()
+        addProgressDots()
+        addFeedbackAndTimer()
     }
 
-    private func addBackground() {
-        let floor = SKShapeNode(rectOf: CGSize(width: size.width, height: size.height * 0.36))
-        floor.position = CGPoint(x: size.width / 2, y: size.height * 0.18)
-        floor.fillColor = .cream
-        floor.strokeColor = .clear
-        floor.zPosition = 0
-        addChild(floor)
-
-        let window = SKShapeNode(rectOf: CGSize(width: size.width * 0.72, height: size.height * 0.16), cornerRadius: 24)
-        window.position = CGPoint(x: size.width / 2, y: size.height * 0.78)
-        window.fillColor = .mint
-        window.strokeColor = .white
-        window.lineWidth = 4
-        window.zPosition = 1
-        addChild(window)
+    private func addBedBackground() {
+        bedNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.30)
+        bedNode.zPosition = 5
+        let bedScale = bedNode.size.width > 0 ? (size.width * 0.95) / bedNode.size.width : 1
+        bedNode.setScale(bedScale)
+        addChild(bedNode)
     }
 
-    private func addAIScreen() {
-        aiScreenNode.path = CGPath(roundedRect: CGRect(x: -92, y: -44, width: 184, height: 88), cornerWidth: 18, cornerHeight: 18, transform: nil)
-        aiScreenNode.position = CGPoint(x: size.width / 2, y: size.height * 0.76)
-        aiScreenNode.fillColor = .happyBlue
-        aiScreenNode.strokeColor = .white
-        aiScreenNode.lineWidth = 4
-        aiScreenNode.zPosition = 2
-        addChild(aiScreenNode)
-
-        let face = SKLabelNode(text: "◡")
-        face.fontName = GameFont.bold
-        face.fontSize = 54
-        face.fontColor = .white
-        face.verticalAlignmentMode = .center
-        aiScreenNode.addChild(face)
+    private func addFloor() {
+        let floorHeight = size.height * 0.22
+        floorNode.path = UIBezierPath(roundedRect: CGRect(
+            x: 0, y: 0,
+            width: size.width, height: floorHeight
+        ), cornerRadius: 0).cgPath
+        floorNode.fillColor = SKColor(hex: 0xA6D0BF)
+        floorNode.strokeColor = .clear
+        floorNode.position = .zero
+        floorNode.zPosition = 5
+        addChild(floorNode)
     }
 
-    private func addCommandCard() {
-        let card = SKShapeNode(rectOf: CGSize(width: size.width * 0.78, height: 78), cornerRadius: 18)
-        card.position = CGPoint(x: size.width / 2, y: size.height * 0.63)
-        card.fillColor = .white.withAlphaComponent(0.9)
-        card.strokeColor = .glitchPurple
-        card.lineWidth = 3
-        card.zPosition = 2
-        addChild(card)
-
-        let command = SKLabelNode(text: "Stay asleep.\nYour schedule has been optimized.")
-        command.fontName = GameFont.regular
-        command.fontSize = 18
-        command.fontColor = .glitchPurple
-        command.numberOfLines = 2
-        command.horizontalAlignmentMode = .center
-        command.verticalAlignmentMode = .center
-        command.preferredMaxLayoutWidth = size.width * 0.7
-        card.addChild(command)
+    private func addMattress() {
+        let mattressWidth = size.width * 0.94
+        let mattressHeight = size.height * 0.14
+        mattressNode.path = CGPath(roundedRect: CGRect(
+            x: -mattressWidth / 2, y: -mattressHeight / 2,
+            width: mattressWidth, height: mattressHeight
+        ), cornerWidth: 24, cornerHeight: 24, transform: nil)
+        mattressNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.26)
+        mattressNode.fillColor = SKColor(hex: 0xE7FFF0)
+        mattressNode.strokeColor = .mint
+        mattressNode.lineWidth = 3
+        mattressNode.zPosition = 6
+        addChild(mattressNode)
     }
 
+    private func addRakaHalfBody() {
+        rakaCropNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.38)
+        rakaCropNode.zPosition = 20
 
-    private func addTimerHUD() {
+        let scaleTarget = size.height * 0.48
+        let scaleFactor = (sleepingRakaNode.size.height > 0) ? (scaleTarget / sleepingRakaNode.size.height) : 1.0
+        baseRakaScale = scaleFactor
+
+        for node in [sleepingRakaNode, awakeRakaNode] {
+            node.setScale(scaleFactor)
+            node.position = .zero
+            rakaCropNode.addChild(node)
+        }
+        awakeRakaNode.isHidden = true
+
+        let renderedHeight = sleepingRakaNode.size.height * baseRakaScale
+        let renderedWidth = sleepingRakaNode.size.width * baseRakaScale
+
+        let cropFraction: CGFloat = 0.58
+        let maskHeight = renderedHeight * cropFraction
+        let maskCenterY = (renderedHeight / 2) - (maskHeight / 2)
+
+        let maskNode = SKShapeNode(rectOf: CGSize(width: renderedWidth + 40, height: maskHeight))
+        maskNode.fillColor = .white
+        maskNode.strokeColor = .clear
+        maskNode.position = CGPoint(x: 0, y: maskCenterY)
+        rakaCropNode.maskNode = maskNode
+
+        addChild(rakaCropNode)
+
+        sleepingRakaNode.run(.repeatForever(.sequence([
+            .scale(to: baseRakaScale * 0.985, duration: 2.0),
+            .scale(to: baseRakaScale * 1.015, duration: 2.0)
+        ])), withKey: "rakaBreathing")
+    }
+
+    private func addPillow() {
+        let pillowWidth = size.width * 0.78
+        let pillowHeight = size.height * 0.08
+        pillowNode.path = CGPath(roundedRect: CGRect(
+            x: -pillowWidth / 2, y: -pillowHeight / 2,
+            width: pillowWidth, height: pillowHeight
+        ), cornerWidth: 20, cornerHeight: 20, transform: nil)
+        pillowNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.34)
+        pillowNode.fillColor = SKColor(hex: 0xFFF4DC)
+        pillowNode.strokeColor = SKColor(hex: 0xE9D8B8)
+        pillowNode.lineWidth = 2
+        pillowNode.zPosition = 7
+
+        let shadowNode = SKShapeNode()
+        shadowNode.path = CGPath(roundedRect: CGRect(
+            x: -pillowWidth / 2 + 6, y: -pillowHeight / 2 - 4,
+            width: pillowWidth - 12, height: pillowHeight - 4
+        ), cornerWidth: 16, cornerHeight: 16, transform: nil)
+        shadowNode.fillColor = SKColor(red: 0.90, green: 0.86, blue: 0.78, alpha: 1.0)
+        shadowNode.strokeColor = .clear
+        shadowNode.zPosition = -1
+        pillowNode.addChild(shadowNode)
+
+        addChild(pillowNode)
+    }
+
+    private func addFaceHitbox() {
+        let hitboxWidth = size.width * 0.52
+        let hitboxHeight = size.height * 0.26
+        faceHitboxNode = SKShapeNode(rectOf: CGSize(width: hitboxWidth, height: hitboxHeight), cornerRadius: 28)
+        faceHitboxNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.50)
+        faceHitboxNode.fillColor = .clear
+        faceHitboxNode.strokeColor = .clear
+        faceHitboxNode.lineWidth = 0
+        faceHitboxNode.name = "raka_face_hitbox"
+        faceHitboxNode.zPosition = 50
+        addChild(faceHitboxNode)
+    }
+
+    private func addProgressDots() {
+        progressDots.removeAll()
+        let dotRadius: CGFloat = 9
+        let spacing: CGFloat = 13
+        let totalWidth = CGFloat(requiredTaps) * (dotRadius * 2 + spacing) - spacing
+        let startX = size.width / 2 - totalWidth / 2
+        let dotY: CGFloat = size.height * 0.12
+
+        for i in 0 ..< requiredTaps {
+            let dot = SKShapeNode(circleOfRadius: dotRadius)
+            dot.position = CGPoint(x: startX + CGFloat(i) * (dotRadius * 2 + spacing) + dotRadius, y: dotY)
+            dot.fillColor = .clear
+            dot.strokeColor = .manualYellow.withAlphaComponent(0.5)
+            dot.lineWidth = 3
+            dot.zPosition = 80
+            dot.name = "progress_dot_\(i)"
+            addChild(dot)
+            progressDots.append(dot)
+        }
+    }
+
+    private func addFeedbackAndTimer() {
+        feedbackLabel.fontName = GameFont.heavy
+        feedbackLabel.fontSize = 22
+        feedbackLabel.fontColor = .glitchPurple
+        feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.16)
+        feedbackLabel.zPosition = 80
+        addChild(feedbackLabel)
+
         timerHUD.position = CGPoint(x: size.width / 2, y: 72)
         timerHUD.zPosition = 1000
         addChild(timerHUD)
+    }
+
+    private func showHintIfNeeded(_ timerState: LevelTimerState) {
+        guard !hintShown, timerState.elapsed >= 2 else { return }
+        hintShown = true
+        feedbackLabel.text = "Tap Raka's face to wake him manually."
+    }
+
+    private func updateProgressDots(filled: Int) {
+        for i in 0 ..< progressDots.count {
+            let dot = progressDots[i]
+            if i < filled {
+                dot.fillColor = .manualYellow
+                dot.strokeColor = .manualYellow
+                dot.setScale(1.0)
+                if i == filled - 1 {
+                    dot.run(.sequence([.scale(to: 1.45, duration: 0.06), .scale(to: 1.0, duration: 0.08)]))
+                }
+            } else {
+                dot.fillColor = .clear
+                dot.strokeColor = .manualYellow.withAlphaComponent(0.5)
+                dot.setScale(1.0)
+            }
+        }
+    }
+
+    private func handleWakeUpFaceTapResult(_ result: WakeUpFaceTapValidationResult, tapLocation: CGPoint) {
+        switch result {
+        case let .faceTapped(currentCount, _):
+            stateMachine.transition(to: .sequenceStarted)
+            updateProgressDots(filled: currentCount)
+            feedbackLabel.text = "FAST TAP \(currentCount)/\(requiredTaps)"
+            feedbackLabel.fontColor = currentCount >= requiredTaps - 2 ? .warningRed : .glitchPurple
+            feedbackLabel.run(.sequence([.scale(to: 1.15, duration: 0.04), .scale(to: 1.0, duration: 0.08)]))
+            playFaceTapAnimation(at: tapLocation)
+        case let .sequenceReset(currentCount, _):
+            stateMachine.transition(to: .sequenceStarted)
+            updateProgressDots(filled: currentCount)
+            feedbackLabel.text = "TOO SLOW — RESET \(currentCount)/\(requiredTaps)"
+            feedbackLabel.fontColor = .warningRed
+            feedbackLabel.run(.sequence([.scale(to: 1.2, duration: 0.05), .scale(to: 1.0, duration: 0.10)]))
+            playFaceTapAnimation(at: tapLocation)
+        case let .rakaAwakened(currentCount, _):
+            updateProgressDots(filled: currentCount)
+            playFaceTapAnimation(at: tapLocation)
+            playWakeUpAnimation()
+        case .ignoredTap:
+            feedbackLabel.text = "Tap Raka, not the room."
+            feedbackLabel.fontColor = .warningRed
+        case .totalTimeout:
+            triggerFailure(reason: "totalTimeout")
+        }
+    }
+
+    private func playFaceTapAnimation(at point: CGPoint) {
+        sleepingRakaNode.removeAction(forKey: "rakaBreathing")
+        sleepingRakaNode.run(.sequence([
+            .scale(to: baseRakaScale * 0.94, duration: 0.04),
+            .scale(to: baseRakaScale * 1.03, duration: 0.05),
+            .scale(to: baseRakaScale, duration: 0.06)
+        ])) { [weak self] in
+            self?.sleepingRakaNode.run(.repeatForever(.sequence([
+                .scale(to: (self?.baseRakaScale ?? 1) * 0.985, duration: 2.0),
+                .scale(to: (self?.baseRakaScale ?? 1) * 1.015, duration: 2.0)
+            ])), withKey: "rakaBreathing")
+        }
+
+        mattressNode.run(.sequence([
+            .moveBy(x: -4, y: -2, duration: 0.03),
+            .moveBy(x: 8, y: 4, duration: 0.05),
+            .moveBy(x: -4, y: -2, duration: 0.03)
+        ]))
+        pillowNode.run(.sequence([
+            .moveBy(x: -3, y: -2, duration: 0.03),
+            .moveBy(x: 6, y: 4, duration: 0.05),
+            .moveBy(x: -3, y: -2, duration: 0.03)
+        ]))
+
+        addTapBurst(at: point)
+    }
+
+    private func addTapBurst(at point: CGPoint) {
+        guard point != .zero else { return }
+
+        [SKColor.manualYellow, SKColor.happyBlue].forEach { color in
+            let size = color == .manualYellow ? CGFloat(18) : CGFloat(28)
+            let burst = SKShapeNode(circleOfRadius: size)
+            burst.position = point
+            burst.fillColor = color.withAlphaComponent(0.30)
+            burst.strokeColor = color
+            burst.lineWidth = 3
+            burst.zPosition = 60
+            addChild(burst)
+            burst.run(.sequence([
+                .group([.scale(to: 2.2, duration: 0.25), .fadeOut(withDuration: 0.25)]),
+                .removeFromParent()
+            ]))
+        }
+    }
+
+    private func playWakeUpAnimation() {
+        guard !hasSentResult else { return }
+        stateMachine.transition(to: .successAnimating)
+        feedbackLabel.text = WakeUpManuallyLevelConfig.successMessage
+        feedbackLabel.fontColor = .happyBlue
+
+        sleepingRakaNode.removeAction(forKey: "rakaBreathing")
+        sleepingRakaNode.isHidden = true
+        awakeRakaNode.isHidden = false
+        awakeRakaNode.run(.sequence([
+            .scale(to: baseRakaScale * 1.08, duration: 0.15),
+            .scale(to: baseRakaScale * 0.96, duration: 0.12),
+            .scale(to: baseRakaScale, duration: 0.10),
+            .smallBounce(),
+            .run { [weak self] in self?.triggerSuccess() }
+        ]))
+    }
+
+    private func triggerSuccess() {
+        guard !hasSentResult else { return }
+        hasSentResult = true
+        complete(LevelResult(
+            levelId: WakeUpManuallyLevelConfig.levelId,
+            didSucceed: true,
+            obedienceDelta: WakeUpManuallyLevelConfig.successObedienceDelta,
+            humanityDelta: WakeUpManuallyLevelConfig.successHumanityDelta,
+            message: WakeUpManuallyLevelConfig.successMessage
+        ))
+    }
+
+    private func triggerFailure(reason: String) {
+        guard !hasSentResult else { return }
+        hasSentResult = true
+        stateMachine.transition(to: .failureAnimating)
+        feedbackLabel.text = WakeUpManuallyLevelConfig.failureMessage
+        feedbackLabel.fontColor = .warningRed
+        complete(LevelResult(
+            levelId: WakeUpManuallyLevelConfig.levelId,
+            didSucceed: false,
+            obedienceDelta: WakeUpManuallyLevelConfig.failureObedienceDelta,
+            humanityDelta: WakeUpManuallyLevelConfig.failureHumanityDelta,
+            message: WakeUpManuallyLevelConfig.failureMessage
+        ))
+    }
+
+    private func complete(_ result: LevelResult) {
+        stateMachine.transition(to: result.didSucceed ? .completed : .failed)
+        DispatchQueue.main.async { [weak self] in
+            self?.levelCompletion?(result)
+        }
     }
 
     private func logTimerWarningIfNeeded(_ timerState: LevelTimerState, levelId: String) {
         guard timerState.isWarning, !hasLoggedTimerWarning else { return }
         hasLoggedTimerWarning = true
         print("Timer warning started:", levelId)
-    }
-
-    private func addBedAndRaka() {
-        let bed = SKShapeNode(rectOf: CGSize(width: size.width * 0.78, height: size.height * 0.22), cornerRadius: 28)
-        bed.position = CGPoint(x: size.width / 2, y: size.height * 0.4)
-        bed.fillColor = .mint
-        bed.strokeColor = .happyBlue
-        bed.lineWidth = 5
-        bed.zPosition = 2
-        addChild(bed)
-
-        bodyNode.path = CGPath(roundedRect: CGRect(x: -86, y: -28, width: 172, height: 56), cornerWidth: 28, cornerHeight: 28, transform: nil)
-        bodyNode.position = CGPoint(x: size.width * 0.52, y: size.height * 0.42)
-        bodyNode.fillColor = SKColor(red: 0.96, green: 0.69, blue: 0.48, alpha: 1)
-        bodyNode.strokeColor = .white
-        bodyNode.lineWidth = 3
-        bodyNode.zPosition = 4
-        addChild(bodyNode)
-
-        headNode.path = CGPath(ellipseIn: CGRect(x: -34, y: -34, width: 68, height: 68), transform: nil)
-        headNode.position = CGPoint(x: size.width * 0.32, y: size.height * 0.44)
-        headNode.fillColor = SKColor(red: 0.98, green: 0.75, blue: 0.57, alpha: 1)
-        headNode.strokeColor = .white
-        headNode.lineWidth = 3
-        headNode.zPosition = 5
-        addChild(headNode)
-
-        eyesNode.fontName = GameFont.bold
-        eyesNode.fontSize = 18
-        eyesNode.fontColor = .glitchPurple
-        eyesNode.verticalAlignmentMode = .center
-        eyesNode.zPosition = 6
-        headNode.addChild(eyesNode)
-
-        wristNode.path = CGPath(ellipseIn: CGRect(x: -16, y: -16, width: 32, height: 32), transform: nil)
-        wristNode.position = CGPoint(x: size.width * 0.67, y: size.height * 0.44)
-        wristNode.fillColor = .manualYellow
-        wristNode.strokeColor = .white
-        wristNode.lineWidth = 3
-        wristNode.zPosition = 7
-        addChild(wristNode)
-
-        blanketNode.path = CGPath(roundedRect: CGRect(x: -110, y: -44, width: 220, height: 88), cornerWidth: 26, cornerHeight: 26, transform: nil)
-        blanketNode.position = CGPoint(x: size.width * 0.54, y: size.height * 0.38)
-        blanketNode.fillColor = SKColor(red: 0.75, green: 0.82, blue: 1.0, alpha: 0.88)
-        blanketNode.strokeColor = .white
-        blanketNode.lineWidth = 3
-        blanketNode.zPosition = 6
-        addChild(blanketNode)
-    }
-
-    private func addProgressAndFeedback() {
-        progressLabel.fontName = GameFont.bold
-        progressLabel.fontSize = 22
-        progressLabel.fontColor = .happyBlue
-        progressLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.25)
-        progressLabel.zPosition = 8
-        addChild(progressLabel)
-
-        feedbackLabel.fontName = GameFont.heavy
-        feedbackLabel.fontSize = 24
-        feedbackLabel.fontColor = .glitchPurple
-        feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.16)
-        feedbackLabel.zPosition = 8
-        addChild(feedbackLabel)
-    }
-
-    private func tapZone(at point: CGPoint) -> TapZone {
-        if wristNode.contains(convert(point, to: wristNode.parent ?? self)) { return .wrist }
-        if headNode.contains(convert(point, to: headNode.parent ?? self)) { return .head }
-        if bodyNode.contains(convert(point, to: bodyNode.parent ?? self)) { return .body }
-        return .wrong
-    }
-
-    private func handleValidationResult(_ result: TapSequenceValidationResult) {
-        switch result {
-        case let .correctStep(progress, total):
-            stateMachine.transition(to: .sequenceStarted)
-            progressLabel.text = "\(progress) / \(total)"
-            feedbackLabel.text = "Manual input detected..."
-        case .completed:
-            triggerSuccess()
-        case .wrong, .noInputTimeout, .gapTimeout, .totalTimeout:
-            triggerFailure()
-        }
-    }
-
-    private func triggerSuccess() {
-        guard !hasSentResult else { return }
-        hasSentResult = true
-        stateMachine.transition(to: .successAnimating)
-        progressLabel.text = "4 / 4"
-        feedbackLabel.text = "Manual Action Detected."
-        feedbackLabel.fontColor = .happyBlue
-        eyesNode.text = "• •"
-
-        bodyNode.run(.smallBounce())
-        headNode.run(.smallBounce())
-        wristNode.run(.repeat(.sequence([.fadeAlpha(to: 0.45, duration: 0.15), .fadeAlpha(to: 1, duration: 0.15)]), count: 4))
-        blanketNode.run(.group([.moveBy(x: 0, y: 80, duration: 0.35), .fadeOut(withDuration: 0.35)]))
-
-        run(.sequence([.wait(forDuration: 0.45), .run { [weak self] in
-            self?.completeSuccess()
-        }]))
-    }
-
-    private func completeSuccess() {
-        stateMachine.transition(to: .completed)
-        levelCompletion?(LevelResult(
-            levelId: "chapter1.level1.wake-up-manually",
-            didSucceed: true,
-            obedienceDelta: -2,
-            humanityDelta: 2,
-            message: "Manual Action Detected."
-        ))
-    }
-
-    private func triggerFailure() {
-        guard !hasSentResult else { return }
-        hasSentResult = true
-        stateMachine.transition(to: .failureAnimating)
-        feedbackLabel.text = "Compliance Detected."
-        feedbackLabel.fontColor = .warningRed
-        blanketNode.run(.group([.scaleY(to: 1.16, duration: 0.25), .fadeAlpha(to: 1, duration: 0.25)]))
-        aiScreenNode.run(.repeat(.sequence([.fadeAlpha(to: 0.55, duration: 0.12), .fadeAlpha(to: 1, duration: 0.12)]), count: 3))
-
-        run(.sequence([.wait(forDuration: 0.45), .run { [weak self] in
-            self?.completeFailure()
-        }]))
-    }
-
-    private func completeFailure() {
-        stateMachine.transition(to: .failed)
-        levelCompletion?(LevelResult(
-            levelId: "chapter1.level1.wake-up-manually",
-            didSucceed: false,
-            obedienceDelta: 2,
-            humanityDelta: 0,
-            message: "Compliance Detected."
-        ))
     }
 }

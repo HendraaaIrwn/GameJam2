@@ -33,7 +33,6 @@ final class RescueChairCitizenScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addZones()
         addChairCitizen()
         addCharacters()

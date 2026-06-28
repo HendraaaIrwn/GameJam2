@@ -30,7 +30,6 @@ final class WalkAgainstCrowdScene: SKScene {
         backgroundColor = .pastelCyan
         addBackground()
         addAIScreen()
-        addCommandCard()
         addRoutes()
         addCrowd()
         addRakaNova()
