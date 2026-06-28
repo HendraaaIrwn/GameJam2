@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class PerfectStreetScene: SKScene {
+class PerfectStreetScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -80,6 +80,7 @@ final class PerfectStreetScene: SKScene {
             return
         }
 
+        playTapSound()
         swipeTrailPath = CGMutablePath()
         swipeTrailPath.move(to: point)
         swipeTrailNode.path = swipeTrailPath

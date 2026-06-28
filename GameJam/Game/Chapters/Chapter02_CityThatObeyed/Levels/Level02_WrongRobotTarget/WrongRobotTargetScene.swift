@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class WrongRobotTargetScene: SKScene {
+class WrongRobotTargetScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -74,6 +74,7 @@ final class WrongRobotTargetScene: SKScene {
         print("Resolved robot target:", target)
 
         guard let result = validator.validateTap(target: target, time: currentSceneTime) else { return }
+        playTapSound()
         print("Robot target validation result:", result)
         handleValidationResult(result)
     }

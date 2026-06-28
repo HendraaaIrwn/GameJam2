@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class DecodeManualProtocolScene: SKScene {
+class DecodeManualProtocolScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -66,6 +66,7 @@ final class DecodeManualProtocolScene: SKScene {
         if let expectedSymbol { print("Expected symbol:", expectedSymbol.rawValue) }
 
         guard let result = validator.validateTap(target: target, symbol: symbol, time: currentSceneTime) else { return }
+        playTapSound()
         print("Manual protocol validation result:", result)
         lastSelectedNode = symbol.flatMap { manualSymbolNodes[$0] ?? aiSymbolNodes[$0] }
         handleManualProtocolResult(result)

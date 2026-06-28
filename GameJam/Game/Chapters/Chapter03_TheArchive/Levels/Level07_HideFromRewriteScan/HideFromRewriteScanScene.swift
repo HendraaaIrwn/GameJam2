@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class HideFromRewriteScanScene: SKScene {
+class HideFromRewriteScanScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -72,6 +72,7 @@ final class HideFromRewriteScanScene: SKScene {
         }
 
         if let result = validator.beginDrag(target: target, startPoint: point, time: currentSceneTime) {
+            playTapSound()
             isDraggingRaka = true
             dragOffset = CGPoint(x: rakaNode.position.x - point.x, y: rakaNode.position.y - point.y)
             rakaNode.zPosition = 90

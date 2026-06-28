@@ -1,48 +1,73 @@
 import SpriteKit
 
-final class RejectAutoRoutineScene: SKScene {
+class RejectAutoRoutineScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
         case acceptedRoutine
-        case noInputTimeout
         case totalTimeout
-        case routineItemTapped
+    }
+
+    private enum RoutineType: String, CaseIterable {
+        case work
+        case walk
+        case smile
+        case rest
+        case breakfast
+
+        var assetName: String {
+            switch self {
+            case .work: "routineWork"
+            case .walk: "routineWalk"
+            case .smile: "routineSmile"
+            case .rest: "routineRest"
+            case .breakfast : "routineBreakfast"
+            }
+        }
+
+        var title: String {
+            switch self {
+            case .work: "Auto Work"
+            case .walk: "Auto Walk"
+            case .smile: "Auto Smile"
+            case .rest: "Auto Rest"
+            case .breakfast: "Auto Breakfast"
+            }
+        }
     }
 
     private let stateMachine = LevelStateMachine()
-    private let timerController = LevelTimerController(totalDuration: 8.0)
-    private let timerHUD = LevelTimerHUDNode(width: 260, height: 14)
+    private let timerController = LevelTimerController(totalDuration: RejectAutoRoutineLevelConfig.totalTimeLimit)
+    private let timerHUD = LevelTimerHUDNode(width: 360, height: 24)
     private let validator = SwipeDismissValidator()
 
     private var currentSceneTime: TimeInterval = 0
     private var levelStartTime: TimeInterval?
-    private var hasReceivedInput = false
     private var hasSentResult = false
     private var hasLoggedTimerWarning = false
     private var dragStartPoint: CGPoint?
+    private var draggedCard: SKSpriteNode?
     private var cardStartPosition: CGPoint = .zero
+    private var remainingRoutines = Set(RoutineType.allCases)
 
-    private let noInputTimeout = 4.0
-    private let aiScreenNode = SKShapeNode(rectOf: .zero)
-    private let aiFaceLabel = SKLabelNode(text: "◡")
-    private let rakaNode = SKShapeNode(rectOf: .zero)
-    private let rakaEyesLabel = SKLabelNode(text: "• •")
-    private let routineCardNode = SKShapeNode(rectOf: .zero)
-    private let acceptButtonNode = SKShapeNode(rectOf: .zero)
-    private let feedbackLabel = SKLabelNode(text: "Swipe card away")
-    private var smallRoutineCards: [SKShapeNode] = []
+    private let screenNode = SKSpriteNode(imageNamed: "routineScreen")
+    private let roomBackgroundNode = SKSpriteNode(imageNamed: "level2RoomBackground")
+    private let rakaBehindNode = SKSpriteNode(imageNamed: "rakaBehind")
+    private let acceptButtonNode = SKShapeNode()
+    private let feedbackLabel = SKLabelNode(text: "Swipe away every routine card")
+    private let commandLabel = SKLabelNode(text: RejectAutoRoutineLevelConfig.command)
+    private var routineCardNodes: [RoutineType: SKSpriteNode] = [:]
 
     override func didMove(to view: SKView) {
-        print("RejectAutoRoutineScene didMove")
+        print("RejectAutoRoutineScene assets applied")
         setupScene()
         stateMachine.reset()
-        levelStartTime = nil
-        hasReceivedInput = false
         timerController.reset()
+        levelStartTime = nil
         hasSentResult = false
         hasLoggedTimerWarning = false
         dragStartPoint = nil
+        draggedCard = nil
     }
 
     override func update(_ currentTime: TimeInterval) {
@@ -53,116 +78,87 @@ final class RejectAutoRoutineScene: SKScene {
             timerController.start(at: currentTime)
             timerHUD.update(with: timerController.update(currentTime: currentTime))
             stateMachine.transition(to: .playing)
-            print("Level 2 timer started")
-            print("Timer started for level:", "chapter1.level2.reject-auto-routine")
             return
         }
 
-        guard stateMachine.canCheckTimeout, let levelStartTime else { return }
-
+        guard stateMachine.canCheckTimeout, levelStartTime != nil else { return }
         if updateTimer(currentTime: currentTime) { return }
-
-        if !hasReceivedInput && currentTime - levelStartTime > noInputTimeout {
-            triggerFailure(reason: .noInputTimeout)
-        }
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard stateMachine.canAcceptInput, let touch = touches.first else { return }
-
         let location = touch.location(in: self)
-        hasReceivedInput = true
 
         if acceptButtonNode.contains(convert(location, to: acceptButtonNode.parent ?? self)) {
-            print("Touched accept button")
             triggerFailure(reason: .acceptedRoutine)
             return
         }
 
-        if routineCardNode.contains(convert(location, to: routineCardNode.parent ?? self)) {
-            print("Touched routine card")
+        if let card = routineCard(at: location) {
+            playTapSound()
             dragStartPoint = location
-            cardStartPosition = routineCardNode.position
+            draggedCard = card
+            cardStartPosition = card.position
+            card.zPosition = 40
             stateMachine.transition(to: .sequenceStarted)
-            return
-        }
-
-        if touchedSmallRoutineCard(at: location) {
-            triggerFailure(reason: .routineItemTapped)
         }
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard stateMachine.canAcceptInput,
-              dragStartPoint != nil,
-              let touch = touches.first else { return }
-
+        guard stateMachine.canAcceptInput, let dragStartPoint, let draggedCard, let touch = touches.first else { return }
         let location = touch.location(in: self)
-        let translation = currentTranslation(to: location)
-        routineCardNode.position = CGPoint(
+        let translation = CGVector(dx: location.x - dragStartPoint.x, dy: location.y - dragStartPoint.y)
+        draggedCard.position = CGPoint(
             x: cardStartPosition.x + translation.dx,
-            y: cardStartPosition.y + min(max(translation.dy, -28), 28)
+            y: cardStartPosition.y + min(max(translation.dy, -20), 20)
         )
-        routineCardNode.zRotation = translation.dx / size.width * 0.25
+        draggedCard.zRotation = translation.dx / size.width * 0.28
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard stateMachine.canAcceptInput,
-              let dragStartPoint,
-              let touch = touches.first else { return }
-
+        guard stateMachine.canAcceptInput, let dragStartPoint, let draggedCard, let touch = touches.first else { return }
         let location = touch.location(in: self)
         let translation = CGVector(dx: location.x - dragStartPoint.x, dy: location.y - dragStartPoint.y)
-        print("Drag translation:", translation)
         let result = validator.validateSwipe(translation: translation)
-        print("Swipe validation result:", result)
         self.dragStartPoint = nil
+        self.draggedCard = nil
 
         switch result {
         case .validDismiss:
-            triggerSuccess(direction: translation.dx >= 0 ? 1 : -1)
+            dismiss(card: draggedCard, direction: translation.dx >= 0 ? 1 : -1)
         case .insufficientSwipe:
-            snapCardBack(message: "Swipe stronger")
+            snapCardBack(draggedCard, message: "Swipe stronger")
         case .wrongDirection:
-            snapCardBack(message: "Reject sideways")
+            snapCardBack(draggedCard, message: "Reject sideways")
         }
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard dragStartPoint != nil else { return }
+        guard let draggedCard else { return }
         dragStartPoint = nil
-        snapCardBack(message: "Try again")
+        self.draggedCard = nil
+        snapCardBack(draggedCard, message: "Try again")
     }
 
     private func setupScene() {
         removeAllChildren()
-        smallRoutineCards.removeAll()
-        backgroundColor = .pastelCyan
+        routineCardNodes.removeAll()
+        remainingRoutines = Set(RoutineType.allCases)
+        backgroundColor = SKColor(hex: 0xB1DFE7)
 
         addBackground()
-        addAIScreen()
-        addTimerHUD()
-        addRaka()
+        addRoutineScreen()
         addRoutineCards()
-        addFeedback()
-    }
-
-
-    private func addTimerHUD() {
-        timerHUD.position = CGPoint(x: size.width / 2, y: 72)
-        timerHUD.zPosition = 1000
-        addChild(timerHUD)
+        addAcceptButton()
+        addRakaBehind()
+        addFeedbackAndTimer()
     }
 
     private func updateTimer(currentTime: TimeInterval) -> Bool {
         let timerState = timerController.update(currentTime: currentTime)
         timerHUD.update(with: timerState)
-        if timerState.isWarning && !hasLoggedTimerWarning {
-            hasLoggedTimerWarning = true
-            print("Timer warning started:", "chapter1.level2.reject-auto-routine")
-        }
+        logTimerWarningIfNeeded(timerState)
         if timerState.hasExpired {
-            print("Timer expired:", "chapter1.level2.reject-auto-routine")
             triggerFailure(reason: .totalTimeout)
             return true
         }
@@ -170,196 +166,173 @@ final class RejectAutoRoutineScene: SKScene {
     }
 
     private func addBackground() {
-        let floor = SKShapeNode(rectOf: CGSize(width: size.width, height: size.height * 0.34))
-        floor.position = CGPoint(x: size.width / 2, y: size.height * 0.17)
-        floor.fillColor = .cream
-        floor.strokeColor = .clear
-        floor.zPosition = 0
-        addChild(floor)
+        roomBackgroundNode.name = "level2_room_background"
+        roomBackgroundNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.5)
+        roomBackgroundNode.zPosition = 0
+        fill(roomBackgroundNode, into: size)
+        addChild(roomBackgroundNode)
     }
 
-    private func addAIScreen() {
-        aiScreenNode.path = CGPath(roundedRect: CGRect(x: -92, y: -42, width: 184, height: 84), cornerWidth: 18, cornerHeight: 18, transform: nil)
-        aiScreenNode.position = CGPoint(x: size.width / 2, y: size.height * 0.78)
-        aiScreenNode.fillColor = .happyBlue
-        aiScreenNode.strokeColor = .white
-        aiScreenNode.lineWidth = 4
-        aiScreenNode.zPosition = 2
-        addChild(aiScreenNode)
-
-        aiFaceLabel.fontName = GameFont.bold
-        aiFaceLabel.fontSize = 54
-        aiFaceLabel.fontColor = .white
-        aiFaceLabel.verticalAlignmentMode = .center
-        aiScreenNode.addChild(aiFaceLabel)
-    }
-
-    private func addCommandCard() {
-        let card = SKShapeNode(rectOf: CGSize(width: size.width * 0.78, height: 74), cornerRadius: 18)
-        card.position = CGPoint(x: size.width / 2, y: size.height * 0.65)
-        card.fillColor = .cream
-        card.strokeColor = .happyBlue
-        card.lineWidth = 3
-        card.zPosition = 2
-        addChild(card)
-
-        let command = SKLabelNode(text: "Accept today’s\nperfect routine.")
-        command.fontName = GameFont.regular
-        command.fontSize = 18
-        command.fontColor = .happyBlue
-        command.numberOfLines = 2
-        command.horizontalAlignmentMode = .center
-        command.verticalAlignmentMode = .center
-        command.preferredMaxLayoutWidth = size.width * 0.7
-        card.addChild(command)
-    }
-
-    private func addRaka() {
-        rakaNode.path = CGPath(roundedRect: CGRect(x: -34, y: -52, width: 68, height: 104), cornerWidth: 34, cornerHeight: 34, transform: nil)
-        rakaNode.position = CGPoint(x: size.width * 0.25, y: size.height * 0.29)
-        rakaNode.fillColor = .happyBlue
-        rakaNode.strokeColor = .white
-        rakaNode.lineWidth = 3
-        rakaNode.zPosition = 3
-        addChild(rakaNode)
-
-        rakaEyesLabel.fontName = GameFont.bold
-        rakaEyesLabel.fontSize = 18
-        rakaEyesLabel.fontColor = .black
-        rakaEyesLabel.verticalAlignmentMode = .center
-        rakaEyesLabel.position = CGPoint(x: 0, y: 18)
-        rakaNode.addChild(rakaEyesLabel)
+    private func addRoutineScreen() {
+        screenNode.name = "routine_screen"
+        screenNode.position = CGPoint(x: size.width * 0.64, y: size.height * 0.44)
+        screenNode.zPosition = 10
+        fit(screenNode, into: CGSize(width: size.width * 0.7, height: size.height * 0.7))
+        addChild(screenNode)
     }
 
     private func addRoutineCards() {
-        let labels = ["AUTO FOOD", "AUTO WALK", "AUTO SMILE", "AUTO WORK", "AUTO REST"]
-        for (index, title) in labels.enumerated() {
-            let card = SKShapeNode(rectOf: CGSize(width: 160, height: 34), cornerRadius: 12)
-            card.position = CGPoint(x: size.width * 0.58, y: size.height * 0.51 - CGFloat(index) * 18)
-            card.fillColor = .mint
-            card.strokeColor = .white
-            card.lineWidth = 2
-            card.zPosition = 3
-            card.name = "smallRoutineCard"
-            addChild(card)
-            smallRoutineCards.append(card)
+        let screenHeight = screenNode.size.height
+        let screenWidth = screenNode.size.width
+        let parentScale = max(screenNode.xScale, 0.001)
+        let verticalSpacing = screenHeight * 0.48
+        let cardTargetSize = CGSize(
+            width: screenWidth * 0.86 / parentScale,
+            height: screenHeight * 0.36 / parentScale
+        )
+        let cardX: CGFloat = 0
+        let startY = screenHeight * 1.1
 
-            let label = SKLabelNode(text: title)
-            label.fontName = GameFont.bold
-            label.fontSize = 12
-            label.fontColor = .happyBlue
-            label.verticalAlignmentMode = .center
-            card.addChild(label)
+        for (index, routine) in RoutineType.allCases.enumerated() {
+            let card = SKSpriteNode(imageNamed: routine.assetName)
+            card.name = "routine_card_\(routine.rawValue)"
+            card.position = CGPoint(x: cardX, y: startY - CGFloat(index) * verticalSpacing)
+            card.zPosition = 25
+            fit(card, into: cardTargetSize)
+            screenNode.addChild(card)
+            routineCardNodes[routine] = card
         }
+    }
 
-        routineCardNode.path = CGPath(roundedRect: CGRect(x: -122, y: -138, width: 244, height: 276), cornerWidth: 28, cornerHeight: 28, transform: nil)
-        routineCardNode.position = CGPoint(x: size.width / 2, y: size.height * 0.4)
-        routineCardNode.fillColor = .white
-        routineCardNode.strokeColor = .pastelCyan
-        routineCardNode.lineWidth = 5
-        routineCardNode.zPosition = 5
-        addChild(routineCardNode)
+    private func addAcceptButton() {
+        let parentScale = max(screenNode.xScale, 0.001)
+        let buttonWidth = screenNode.size.width * 0.64 / parentScale
+        let buttonHeight = screenNode.size.height * 0.1 / parentScale
+        let buttonRect = CGRect(x: -buttonWidth / 2, y: -buttonHeight / 2, width: buttonWidth, height: buttonHeight)
+        let cornerRadius = buttonHeight * 0.3
 
-        let title = SKLabelNode(text: "TODAY’S ROUTINE")
-        title.fontName = GameFont.heavy
-        title.fontSize = 22
-        title.fontColor = .glitchPurple
-        title.position = CGPoint(x: 0, y: 86)
-        title.verticalAlignmentMode = .center
-        routineCardNode.addChild(title)
+        acceptButtonNode.name = "accept_routine_button"
+        acceptButtonNode.path = CGPath(roundedRect: buttonRect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+        acceptButtonNode.position = CGPoint(x: 0, y: -screenNode.size.height * 1.26)
+        acceptButtonNode.fillColor = .appMintGreen
+        acceptButtonNode.strokeColor = .white.withAlphaComponent(0.96)
+        acceptButtonNode.lineWidth = 6
+        acceptButtonNode.zPosition = 26
+        screenNode.addChild(acceptButtonNode)
 
-        for (index, item) in labels.enumerated() {
-            let label = SKLabelNode(text: item)
-            label.fontName = GameFont.regular
-            label.fontSize = 14
-            label.fontColor = .happyBlue
-            label.position = CGPoint(x: 0, y: 42 - CGFloat(index) * 26)
-            label.verticalAlignmentMode = .center
-            routineCardNode.addChild(label)
-        }
+        addNovaButtonDetails(width: buttonWidth, height: buttonHeight)
 
-        acceptButtonNode.path = CGPath(roundedRect: CGRect(x: -72, y: -22, width: 144, height: 44), cornerWidth: 18, cornerHeight: 18, transform: nil)
-        acceptButtonNode.position = CGPoint(x: 0, y: -96)
-        acceptButtonNode.fillColor = .pastelCyan
-        acceptButtonNode.strokeColor = .happyBlue
-        acceptButtonNode.lineWidth = 3
-        acceptButtonNode.zPosition = 6
-        routineCardNode.addChild(acceptButtonNode)
-
-        let acceptLabel = SKLabelNode(text: "ACCEPT")
-        acceptLabel.fontName = GameFont.heavy
-        acceptLabel.fontSize = 18
-        acceptLabel.fontColor = .happyBlue
+        let acceptLabel = SKLabelNode(text: "Accept Routine")
+        acceptLabel.name = "accept_routine_label"
+        acceptLabel.fontName = GameFont.pixelifySans
+        acceptLabel.fontSize = buttonHeight * 0.42
+        acceptLabel.fontColor = SKColor(hex: "#EFFFFF")
         acceptLabel.verticalAlignmentMode = .center
+        acceptLabel.zPosition = 3
         acceptButtonNode.addChild(acceptLabel)
     }
 
-    private func addFeedback() {
-        feedbackLabel.fontName = GameFont.heavy
-        feedbackLabel.fontSize = 23
-        feedbackLabel.fontColor = .glitchPurple
-        feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.14)
-        feedbackLabel.zPosition = 8
-        addChild(feedbackLabel)
+    private func addNovaButtonDetails(width: CGFloat, height: CGFloat) {
+        let topLineA = SKShapeNode(rectOf: CGSize(width: 34, height: 4), cornerRadius: 2)
+        topLineA.fillColor = .white.withAlphaComponent(0.42)
+        topLineA.strokeColor = .clear
+        topLineA.position = CGPoint(x: -18, y: height * 0.32)
+        topLineA.zPosition = 2
+        acceptButtonNode.addChild(topLineA)
+
+        let topLineB = SKShapeNode(rectOf: CGSize(width: 46, height: 5), cornerRadius: 2.5)
+        topLineB.fillColor = .white.withAlphaComponent(0.86)
+        topLineB.strokeColor = .clear
+        topLineB.position = CGPoint(x: 32, y: height * 0.32)
+        topLineB.zPosition = 2
+        acceptButtonNode.addChild(topLineB)
+
+        let bottomLine = SKShapeNode(rectOf: CGSize(width: 92, height: 5), cornerRadius: 2.5)
+        bottomLine.fillColor = .white.withAlphaComponent(0.5)
+        bottomLine.strokeColor = .clear
+        bottomLine.position = CGPoint(x: 0, y: -height * 0.32)
+        bottomLine.zPosition = 2
+        acceptButtonNode.addChild(bottomLine)
     }
 
-    private func touchedSmallRoutineCard(at point: CGPoint) -> Bool {
-        smallRoutineCards.contains { card in
-            card.contains(convert(point, to: card.parent ?? self))
+    private func addRakaBehind() {
+        rakaBehindNode.name = "raka_behind"
+        rakaBehindNode.position = CGPoint(x: size.width * 0.25, y: size.height * 0.18)
+        rakaBehindNode.zPosition = 40
+        fit(rakaBehindNode, into: CGSize(width: size.width * 0.7, height: size.height * 0.7))
+        addChild(rakaBehindNode)
+    }
+
+    private func addFeedbackAndTimer() {
+        feedbackLabel.fontName = GameFont.heavy
+        feedbackLabel.fontSize = 21
+        feedbackLabel.fontColor = .glitchPurple
+        feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.68)
+        feedbackLabel.zPosition = 80
+        addChild(feedbackLabel)
+
+        timerHUD.position = CGPoint(x: size.width / 2, y: 54)
+        timerHUD.zPosition = 1000
+        addChild(timerHUD)
+    }
+
+    private func routineCard(at point: CGPoint) -> SKSpriteNode? {
+        routineCardNodes.values.first { card in
+            remainingRoutines.contains(routineType(for: card)) && card.contains(convert(point, to: card.parent ?? self))
         }
     }
 
-    private func currentTranslation(to location: CGPoint) -> CGVector {
-        guard let dragStartPoint else { return .zero }
-        return CGVector(dx: location.x - dragStartPoint.x, dy: location.y - dragStartPoint.y)
+    private func routineType(for card: SKSpriteNode) -> RoutineType {
+        RoutineType.allCases.first { routineCardNodes[$0] === card } ?? .work
     }
 
-    private func snapCardBack(message: String) {
+    private func snapCardBack(_ card: SKSpriteNode, message: String) {
         feedbackLabel.text = message
         feedbackLabel.fontColor = .warningRed
-        routineCardNode.run(.group([
+        card.run(.group([
             .move(to: cardStartPosition, duration: 0.2),
             .rotate(toAngle: 0, duration: 0.2)
         ]))
     }
 
-    private func triggerSuccess(direction: CGFloat) {
+    private func dismiss(card: SKSpriteNode, direction: CGFloat) {
+        let routine = routineType(for: card)
+        remainingRoutines.remove(routine)
+        feedbackLabel.text = "Rejected \(routine.title)"
+        feedbackLabel.fontColor = .happyBlue
+
+        card.run(.sequence([
+            .group([
+                .moveBy(x: direction * size.width, y: 20, duration: 0.32),
+                .rotate(byAngle: direction * 0.35, duration: 0.32),
+                .fadeOut(withDuration: 0.32)
+            ]),
+            .removeFromParent(),
+            .run { [weak self] in self?.completeIfAllRoutinesRejected() }
+        ]))
+    }
+
+    private func completeIfAllRoutinesRejected() {
+        guard remainingRoutines.isEmpty else { return }
+        triggerSuccess()
+    }
+
+    private func triggerSuccess() {
         guard !hasSentResult else { return }
         hasSentResult = true
         stateMachine.transition(to: .successAnimating)
-        print("Trigger Level 2 success")
-        feedbackLabel.text = "Routine rejected."
+        feedbackLabel.text = RejectAutoRoutineLevelConfig.successMessage
         feedbackLabel.fontColor = .happyBlue
-
-        routineCardNode.run(.group([
-            .moveBy(x: direction * size.width, y: 0, duration: 0.35),
-            .rotate(byAngle: direction * 0.25, duration: 0.35)
-        ]))
-
-        for (index, card) in smallRoutineCards.enumerated() {
-            let x = CGFloat(index - 2) * 34
-            let y = CGFloat(index % 2 == 0 ? 1 : -1) * 34
-            card.run(.group([.moveBy(x: x, y: y, duration: 0.35), .rotate(byAngle: CGFloat(index - 2) * 0.12, duration: 0.35)]))
-        }
-
-        aiScreenNode.fillColor = .glitchPurple
-        aiScreenNode.run(.repeat(.sequence([.fadeAlpha(to: 0.5, duration: 0.08), .fadeAlpha(to: 1, duration: 0.08)]), count: 4))
-        rakaNode.run(.smallBounce())
-
+        screenNode.run(.repeat(.sequence([.fadeAlpha(to: 0.65, duration: 0.08), .fadeAlpha(to: 1, duration: 0.08)]), count: 4))
         run(.sequence([.wait(forDuration: 0.7), .run { [weak self] in
-            self?.completeSuccess()
+            self?.complete(LevelResult(
+                levelId: RejectAutoRoutineLevelConfig.levelId,
+                didSucceed: true,
+                obedienceDelta: RejectAutoRoutineLevelConfig.successObedienceDelta,
+                humanityDelta: RejectAutoRoutineLevelConfig.successHumanityDelta,
+                message: RejectAutoRoutineLevelConfig.successMessage
+            ))
         }]))
-    }
-
-    private func completeSuccess() {
-        stateMachine.transition(to: .completed)
-        levelCompletion?(LevelResult(
-            levelId: "chapter1.level2.reject-auto-routine",
-            didSucceed: true,
-            obedienceDelta: -3,
-            humanityDelta: 2,
-            message: "Routine rejected."
-        ))
     }
 
     private func triggerFailure(reason: FailureReason) {
@@ -367,29 +340,45 @@ final class RejectAutoRoutineScene: SKScene {
         hasSentResult = true
         stateMachine.transition(to: .failureAnimating)
         print("Trigger Level 2 failure:", reason.rawValue)
-        feedbackLabel.text = "Compliance Detected."
+        feedbackLabel.text = RejectAutoRoutineLevelConfig.failureMessage
         feedbackLabel.fontColor = .warningRed
-        aiFaceLabel.text = "◠"
-        rakaEyesLabel.text = "– –"
-
-        routineCardNode.fillColor = .pastelCyan
         acceptButtonNode.run(.repeat(.sequence([.scale(to: 1.08, duration: 0.12), .scale(to: 1, duration: 0.12)]), count: 3))
-        aiScreenNode.run(.repeat(.sequence([.fadeAlpha(to: 0.55, duration: 0.12), .fadeAlpha(to: 1, duration: 0.12)]), count: 3))
-        rakaNode.run(.moveBy(x: 0, y: -14, duration: 0.25))
-
+        screenNode.run(.repeat(.sequence([.fadeAlpha(to: 0.55, duration: 0.12), .fadeAlpha(to: 1, duration: 0.12)]), count: 3))
         run(.sequence([.wait(forDuration: 0.7), .run { [weak self] in
-            self?.completeFailure()
+            self?.complete(LevelResult(
+                levelId: RejectAutoRoutineLevelConfig.levelId,
+                didSucceed: false,
+                obedienceDelta: RejectAutoRoutineLevelConfig.failureObedienceDelta,
+                humanityDelta: RejectAutoRoutineLevelConfig.failureHumanityDelta,
+                message: RejectAutoRoutineLevelConfig.failureMessage
+            ))
         }]))
     }
 
-    private func completeFailure() {
-        stateMachine.transition(to: .failed)
-        levelCompletion?(LevelResult(
-            levelId: "chapter1.level2.reject-auto-routine",
-            didSucceed: false,
-            obedienceDelta: 3,
-            humanityDelta: 0,
-            message: "Compliance Detected."
-        ))
+    private func complete(_ result: LevelResult) {
+        stateMachine.transition(to: result.didSucceed ? .completed : .failed)
+        DispatchQueue.main.async { [weak self] in
+            self?.levelCompletion?(result)
+        }
+    }
+
+    private func logTimerWarningIfNeeded(_ timerState: LevelTimerState) {
+        guard timerState.isWarning, !hasLoggedTimerWarning else { return }
+        hasLoggedTimerWarning = true
+        print("Timer warning started:", RejectAutoRoutineLevelConfig.levelId)
+    }
+
+    private func fit(_ node: SKSpriteNode, into targetSize: CGSize) {
+        let textureSize = node.texture?.size() ?? node.size
+        guard textureSize.width > 0, textureSize.height > 0 else { return }
+        let scale = min(targetSize.width / textureSize.width, targetSize.height / textureSize.height)
+        node.setScale(scale)
+    }
+
+    private func fill(_ node: SKSpriteNode, into targetSize: CGSize) {
+        let textureSize = node.texture?.size() ?? node.size
+        guard textureSize.width > 0, textureSize.height > 0 else { return }
+        let scale = max(targetSize.width / textureSize.width, targetSize.height / textureSize.height)
+        node.setScale(scale)
     }
 }

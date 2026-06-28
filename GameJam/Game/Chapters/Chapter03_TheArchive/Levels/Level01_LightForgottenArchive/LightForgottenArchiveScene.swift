@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class LightForgottenArchiveScene: SKScene {
+class LightForgottenArchiveScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -52,6 +52,7 @@ final class LightForgottenArchiveScene: SKScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard stateMachine.canAcceptInput, let point = touches.first?.location(in: self) else { return }
+        playTapSound()
         let target = archiveLightTarget(at: point)
         print("Tapped target:", target.rawValue)
 

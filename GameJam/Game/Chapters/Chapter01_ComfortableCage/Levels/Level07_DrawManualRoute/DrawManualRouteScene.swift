@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class DrawManualRouteScene: SKScene {
+class DrawManualRouteScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -81,6 +81,7 @@ final class DrawManualRouteScene: SKScene {
             return
         }
 
+        playTapSound()
         drawnPath = CGMutablePath()
         drawnPath.move(to: location)
         drawnRouteNode.path = drawnPath

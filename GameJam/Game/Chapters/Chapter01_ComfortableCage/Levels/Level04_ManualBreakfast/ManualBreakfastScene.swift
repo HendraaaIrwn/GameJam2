@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class ManualBreakfastScene: SKScene {
+class ManualBreakfastScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -88,6 +88,7 @@ final class ManualBreakfastScene: SKScene {
         let choice = foodChoice(from: tappedNode)
         print("Resolved food choice:", choice)
         guard choice != .wrong else { return }
+        playTapSound()
 
         selectedFoodNode = foodNode(from: tappedNode)
         let result = validator.validate(choice: choice)

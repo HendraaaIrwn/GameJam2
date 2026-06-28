@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class FindManualKeyScene: SKScene {
+class FindManualKeyScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -73,6 +73,7 @@ final class FindManualKeyScene: SKScene {
         let location = touch.location(in: self)
 
         if spotlightNode.contains(convert(location, to: spotlightNode.parent ?? self)) {
+            playTapSound()
             isDraggingLight = true
             moveSpotlight(to: location)
             handleValidationResult(validator.recordDrag(at: currentSceneTime, didRevealManualKey: shouldRevealManualKey()))

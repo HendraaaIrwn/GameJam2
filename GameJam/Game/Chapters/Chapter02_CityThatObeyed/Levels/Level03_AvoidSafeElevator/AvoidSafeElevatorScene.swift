@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class AvoidSafeElevatorScene: SKScene {
+class AvoidSafeElevatorScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -83,6 +83,7 @@ final class AvoidSafeElevatorScene: SKScene {
             return
         }
 
+        playTapSound()
         swipeTrailPath = CGMutablePath()
         swipeTrailPath.move(to: point)
         swipeTrailNode.path = swipeTrailPath

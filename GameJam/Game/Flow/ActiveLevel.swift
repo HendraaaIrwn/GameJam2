@@ -119,7 +119,7 @@ enum ActiveLevel {
         case .wakeUpManually:
             "Do not disturb Raka, Automatic Wake up Routine activated."
         case .rejectAutoRoutine:
-            "Follow the approved morning routine."
+            "Accept the approved morning routine."
         case .openSmartCurtain:
             "Keep smart curtains in automatic comfort mode."
         case .manualBreakfast:

@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class EnterManualTunnelScene: SKScene {
+class EnterManualTunnelScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -62,6 +62,7 @@ final class EnterManualTunnelScene: SKScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard stateMachine.canAcceptInput, let point = touches.first?.location(in: self) else { return }
+        playTapSound()
         let target = tunnelEntryTarget(at: point)
         print("Tapped target:", target)
         if let result = validator.beginHold(target: target, startPoint: point, time: currentSceneTime) {

@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class OpenSmartCurtainScene: SKScene {
+class OpenSmartCurtainScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private enum FailureReason: String {
@@ -97,6 +97,7 @@ final class OpenSmartCurtainScene: SKScene {
 
         if windowNode.contains(convert(location, to: windowNode.parent ?? self)) {
             print("Touched curtain area")
+            playTapSound()
             dragStartPoint = location
             stateMachine.transition(to: .sequenceStarted)
         }

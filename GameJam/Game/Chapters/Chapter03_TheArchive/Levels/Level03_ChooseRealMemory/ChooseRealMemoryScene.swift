@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class ChooseRealMemoryScene: SKScene {
+class ChooseRealMemoryScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -58,6 +58,7 @@ final class ChooseRealMemoryScene: SKScene {
         let target = memoryChoiceTarget(at: location)
         print("Resolved memory target:", target)
         guard let result = validator.validateTap(target: target, time: currentSceneTime) else { return }
+        playTapSound()
         print("Memory choice validation result:", result)
         handleMemoryChoiceResult(result)
     }

@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class Chapter4Level1PlaceholderScene: SKScene {
+class Chapter4Level1PlaceholderScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let aiWallScreenNode = SKShapeNode(rectOf: CGSize(width: 230, height: 76), cornerRadius: 18)

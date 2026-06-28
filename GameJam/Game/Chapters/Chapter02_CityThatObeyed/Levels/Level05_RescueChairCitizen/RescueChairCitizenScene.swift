@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class RescueChairCitizenScene: SKScene {
+class RescueChairCitizenScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -69,6 +69,7 @@ final class RescueChairCitizenScene: SKScene {
         print("Tapped target:", target)
         if let result = validator.beginDrag(target: target, startPoint: touchPoint, time: currentSceneTime) {
             if result == .dragStarted {
+                playTapSound()
                 isDraggingCitizen = true
                 citizenStartPosition = citizenNode.position
                 dragOffset = CGPoint(x: citizenNode.position.x - touchPoint.x, y: citizenNode.position.y - touchPoint.y)

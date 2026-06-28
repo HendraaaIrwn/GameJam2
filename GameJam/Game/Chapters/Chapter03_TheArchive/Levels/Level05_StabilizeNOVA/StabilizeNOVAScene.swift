@@ -1,6 +1,6 @@
 import SpriteKit
 
-final class StabilizeNOVAScene: SKScene {
+class StabilizeNOVAScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
 
     private let stateMachine = LevelStateMachine()
@@ -67,12 +67,14 @@ final class StabilizeNOVAScene: SKScene {
         print("Tapped target:", target.rawValue)
 
         if let result = validator.validateTap(target: target, time: currentSceneTime) {
+            playTapSound()
             print("NOVA stabilization validation result:", result)
             handleNOVAStabilizationResult(result)
             return
         }
 
         if let result = validator.beginDrag(target: target, startPoint: touchPoint, time: currentSceneTime) {
+            playTapSound()
             isDraggingNOVA = true
             dragOffset = CGPoint(x: novaNode.position.x - touchPoint.x, y: novaNode.position.y - touchPoint.y)
             novaNode.zPosition = 80
