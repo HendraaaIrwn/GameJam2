@@ -1,4 +1,6 @@
 enum GameScreen {
+    case home
+    case storyline
     case gameplay
     case chapterTransition
 }

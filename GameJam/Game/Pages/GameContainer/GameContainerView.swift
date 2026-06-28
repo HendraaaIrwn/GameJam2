@@ -6,6 +6,12 @@ struct GameContainerView: View {
 
     var body: some View {
         switch viewModel.screen {
+        case .home:
+            HomeView(startGame: viewModel.startGame)
+
+        case .storyline:
+            StorylineBoardView(onCompleted: viewModel.completeStorylineIntro)
+
         case .gameplay:
             ZStack(alignment: .top) {
                 SpriteView(scene: viewModel.scene)

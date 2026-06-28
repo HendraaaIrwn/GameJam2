@@ -8,7 +8,7 @@ final class GameFlowViewModel {
     private(set) var lastResult: LevelResult?
     private(set) var attempt = 1
     private(set) var activeLevel: ActiveLevel = .wakeUpManually
-    private(set) var screen: GameScreen = .gameplay
+    private(set) var screen: GameScreen = .home
     private(set) var activeTransition: ActiveChapterTransition = .chapter1ToChapter2
     private(set) var sceneID = UUID()
 
@@ -33,6 +33,21 @@ final class GameFlowViewModel {
 
     var canRetry: Bool {
         lastResult != nil
+    }
+
+    func startGame() {
+        print("Homepage START tapped")
+        print("Storyline intro started")
+        screen = .storyline
+    }
+
+    func completeStorylineIntro() {
+        print("Storyline completed")
+        print("Starting Chapter 1 Level 1")
+        activeLevel = .wakeUpManually
+        lastResult = nil
+        screen = .gameplay
+        setScene(for: activeLevel)
     }
 
     func retry() {
