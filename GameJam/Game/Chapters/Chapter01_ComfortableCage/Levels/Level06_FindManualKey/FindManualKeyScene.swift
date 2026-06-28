@@ -159,7 +159,7 @@ final class FindManualKeyScene: SKScene {
         aiScreenNode.zPosition = 3
         addChild(aiScreenNode)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 52
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -176,7 +176,7 @@ final class FindManualKeyScene: SKScene {
         addChild(card)
 
         let command = SKLabelNode(text: "Use the blue key.\nIt is the safest option.")
-        command.fontName = "AvenirNext-DemiBold"
+        command.fontName = GameFont.regular
         command.fontSize = 17
         command.fontColor = .happyBlue
         command.numberOfLines = 2
@@ -195,7 +195,7 @@ final class FindManualKeyScene: SKScene {
         addChild(suggestionButtonNode)
 
         let label = SKLabelNode(text: "USE AI KEY")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 16
         label.fontColor = .happyBlue
         label.verticalAlignmentMode = .center
@@ -253,7 +253,7 @@ final class FindManualKeyScene: SKScene {
         addChild(rakaNode)
 
         let eyes = SKLabelNode(text: "• •")
-        eyes.fontName = "AvenirNext-Bold"
+        eyes.fontName = GameFont.bold
         eyes.fontSize = 20
         eyes.fontColor = .black
         eyes.position = CGPoint(x: 0, y: 30)
@@ -270,7 +270,7 @@ final class FindManualKeyScene: SKScene {
         addChild(novaNode)
 
         let face = SKLabelNode(text: "?")
-        face.fontName = "AvenirNext-Bold"
+        face.fontName = GameFont.bold
         face.fontSize = 24
         face.fontColor = .happyBlue
         face.verticalAlignmentMode = .center
@@ -298,7 +298,7 @@ final class FindManualKeyScene: SKScene {
         addChild(spotlightNode)
 
         let label = SKLabelNode(text: "DRAG")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 14
         label.fontColor = .manualYellow
         label.verticalAlignmentMode = .center
@@ -306,7 +306,7 @@ final class FindManualKeyScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 22
         feedbackLabel.fontColor = .manualYellow
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.12)

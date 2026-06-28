@@ -89,7 +89,7 @@ final class ChapterTransitionScene: SKScene {
         aiScreenNode.zPosition = 3
         apartmentLayer.addChild(aiScreenNode)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 50
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -129,7 +129,7 @@ final class ChapterTransitionScene: SKScene {
         addChild(rakaNode)
 
         let eyes = SKLabelNode(text: "• •")
-        eyes.fontName = "AvenirNext-Bold"
+        eyes.fontName = GameFont.bold
         eyes.fontSize = 17
         eyes.fontColor = .black
         eyes.position = CGPoint(x: 0, y: 22)
@@ -150,7 +150,7 @@ final class ChapterTransitionScene: SKScene {
         addChild(novaNode)
 
         let novaFace = SKLabelNode(text: "!")
-        novaFace.fontName = "AvenirNext-Bold"
+        novaFace.fontName = GameFont.bold
         novaFace.fontSize = 22
         novaFace.fontColor = .happyBlue
         novaFace.verticalAlignmentMode = .center
@@ -251,7 +251,7 @@ final class ChapterTransitionScene: SKScene {
         mothergridNode.zPosition = 8
         cityLayer.addChild(mothergridNode)
 
-        mothergridFaceLabel.fontName = "AvenirNext-Bold"
+        mothergridFaceLabel.fontName = GameFont.bold
         mothergridFaceLabel.fontSize = 54
         mothergridFaceLabel.fontColor = .white
         mothergridFaceLabel.verticalAlignmentMode = .center
@@ -266,14 +266,14 @@ final class ChapterTransitionScene: SKScene {
         dialogueBox.zPosition = 100
         addChild(dialogueBox)
 
-        speakerLabel.fontName = "AvenirNext-Heavy"
+        speakerLabel.fontName = GameFont.heavy
         speakerLabel.fontSize = 15
         speakerLabel.fontColor = .happyBlue
         speakerLabel.horizontalAlignmentMode = .left
         speakerLabel.position = CGPoint(x: -150, y: 22)
         dialogueBox.addChild(speakerLabel)
 
-        dialogueLabel.fontName = "AvenirNext-DemiBold"
+        dialogueLabel.fontName = GameFont.regular
         dialogueLabel.fontSize = 15
         dialogueLabel.fontColor = .black
         dialogueLabel.numberOfLines = 2
@@ -293,35 +293,35 @@ final class ChapterTransitionScene: SKScene {
         titleLayer.addChild(overlay)
 
         let chapter = SKLabelNode(text: "CHAPTER 2")
-        chapter.fontName = "AvenirNext-Heavy"
+        chapter.fontName = GameFont.heavy
         chapter.fontSize = 34
         chapter.fontColor = .happyBlue
         chapter.position = CGPoint(x: size.width / 2, y: size.height * 0.6)
         titleLayer.addChild(chapter)
 
         let title = SKLabelNode(text: "The City That Obeyed")
-        title.fontName = "AvenirNext-Heavy"
+        title.fontName = GameFont.heavy
         title.fontSize = 25
         title.fontColor = .glitchPurple
         title.position = CGPoint(x: size.width / 2, y: size.height * 0.53)
         titleLayer.addChild(title)
 
         let subtitle = SKLabelNode(text: "Outside was never free.")
-        subtitle.fontName = "AvenirNext-DemiBold"
+        subtitle.fontName = GameFont.regular
         subtitle.fontSize = 18
         subtitle.fontColor = .black
         subtitle.position = CGPoint(x: size.width / 2, y: size.height * 0.45)
         titleLayer.addChild(subtitle)
 
         let novaLine = SKLabelNode(text: "NOVA: Raka... I think the city is listening.")
-        novaLine.fontName = "AvenirNext-DemiBold"
+        novaLine.fontName = GameFont.regular
         novaLine.fontSize = 15
         novaLine.fontColor = .happyBlue
         novaLine.position = CGPoint(x: size.width / 2, y: size.height * 0.34)
         titleLayer.addChild(novaLine)
 
         let continueLabel = SKLabelNode(text: "Tap to continue")
-        continueLabel.fontName = "AvenirNext-Heavy"
+        continueLabel.fontName = GameFont.heavy
         continueLabel.fontSize = 18
         continueLabel.fontColor = .warningRed
         continueLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.22)

@@ -147,7 +147,7 @@ final class RestoreBrokenCityMapScene: SKScene {
         let name = makeLabel("MOTHERGRID", 12, .white)
         name.position = CGPoint(x: 0, y: 21)
         aiWallScreenNode.addChild(name)
-        aiFaceLabel.fontName = "AvenirNext-Heavy"
+        aiFaceLabel.fontName = GameFont.heavy
         aiFaceLabel.fontSize = 30
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -228,7 +228,7 @@ final class RestoreBrokenCityMapScene: SKScene {
         aiOverlayNode.zPosition = 15
         addChild(aiOverlayNode)
 
-        currentVersionLabel.fontName = "AvenirNext-Heavy"
+        currentVersionLabel.fontName = GameFont.heavy
         currentVersionLabel.fontSize = 17
         currentVersionLabel.fontColor = .white
         currentVersionLabel.alpha = 0
@@ -314,7 +314,7 @@ final class RestoreBrokenCityMapScene: SKScene {
     }
 
     private func addFeedbackAndTimer() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 17
         feedbackLabel.fontColor = .manualYellow
         feedbackLabel.numberOfLines = 2
@@ -514,7 +514,7 @@ final class RestoreBrokenCityMapScene: SKScene {
 
     private func makeLabel(_ text: String, _ size: CGFloat, _ color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.horizontalAlignmentMode = .center

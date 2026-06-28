@@ -64,7 +64,7 @@ final class Chapter4Level1PlaceholderScene: SKScene {
         addChild(novaNode)
         novaNode.addChild(makeLabel("• ◡ •", 11, .black))
 
-        placeholderLabel.fontName = "AvenirNext-Heavy"
+        placeholderLabel.fontName = GameFont.heavy
         placeholderLabel.fontSize = 20
         placeholderLabel.fontColor = .manualYellow
         placeholderLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.5)
@@ -74,7 +74,7 @@ final class Chapter4Level1PlaceholderScene: SKScene {
 
     private func makeLabel(_ text: String, _ size: CGFloat, _ color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.horizontalAlignmentMode = .center

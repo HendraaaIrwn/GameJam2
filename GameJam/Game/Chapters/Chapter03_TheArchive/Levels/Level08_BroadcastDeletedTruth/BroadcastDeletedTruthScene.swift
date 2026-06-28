@@ -181,7 +181,7 @@ final class BroadcastDeletedTruthScene: SKScene {
         label.position = CGPoint(x: 0, y: 112)
         terminalNode.addChild(label)
 
-        progressLabel.fontName = "AvenirNext-Heavy"
+        progressLabel.fontName = GameFont.heavy
         progressLabel.fontSize = 13
         progressLabel.fontColor = .cream
         progressLabel.position = CGPoint(x: 0, y: 86)
@@ -200,7 +200,7 @@ final class BroadcastDeletedTruthScene: SKScene {
         switchNode.addChild(makeLabel("HOLD", 10, .black))
 
         yellowZoneNode.name = "yellow_signal_zone"
-        yellowZoneNode.position = CGPoint(x: size.width / 2 + 105, y: size.height * 0.43)
+        yellowZoneNode.position = CGPoint(x: size.width / 2 + 105, y: size.height * 0.36)
         yellowZoneNode.fillColor = .manualYellow.withAlphaComponent(0.22)
         yellowZoneNode.strokeColor = .manualYellow
         yellowZoneNode.lineWidth = 2
@@ -209,7 +209,7 @@ final class BroadcastDeletedTruthScene: SKScene {
         yellowZoneNode.addChild(makeLabel("RAW", 11, .manualYellow))
 
         blueZoneNode.name = "blue_ai_zone"
-        blueZoneNode.position = CGPoint(x: size.width / 2 - 105, y: size.height * 0.43)
+        blueZoneNode.position = CGPoint(x: size.width / 2 - 105, y: size.height * 0.36)
         blueZoneNode.fillColor = .happyBlue.withAlphaComponent(0.22)
         blueZoneNode.strokeColor = .happyBlue
         blueZoneNode.lineWidth = 2
@@ -310,7 +310,7 @@ final class BroadcastDeletedTruthScene: SKScene {
     }
 
     private func addFeedbackAndTimer() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 14
         feedbackLabel.fontColor = .cream
         feedbackLabel.horizontalAlignmentMode = .center
@@ -466,7 +466,7 @@ final class BroadcastDeletedTruthScene: SKScene {
 
     private func makeLabel(_ text: String, _ size: CGFloat, _ color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.horizontalAlignmentMode = .center

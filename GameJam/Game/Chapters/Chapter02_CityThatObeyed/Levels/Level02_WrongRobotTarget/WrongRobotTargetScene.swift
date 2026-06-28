@@ -157,13 +157,13 @@ final class WrongRobotTargetScene: SKScene {
         addChild(aiWallScreenNode)
 
         let title = SKLabelNode(text: "CITY AI")
-        title.fontName = "AvenirNext-Heavy"
+        title.fontName = GameFont.heavy
         title.fontSize = 14
         title.fontColor = .white
         title.position = CGPoint(x: 0, y: 22)
         aiWallScreenNode.addChild(title)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 36
         aiFaceLabel.fontColor = .white
         aiFaceLabel.position = CGPoint(x: 0, y: -12)
@@ -181,7 +181,7 @@ final class WrongRobotTargetScene: SKScene {
         addChild(card)
 
         let label = SKLabelNode(text: "Stop the wheeled robot.\nIt is disrupting city order.")
-        label.fontName = "AvenirNext-DemiBold"
+        label.fontName = GameFont.regular
         label.fontSize = 16
         label.fontColor = .happyBlue
         label.numberOfLines = 2
@@ -201,7 +201,7 @@ final class WrongRobotTargetScene: SKScene {
         addChild(rakaNode)
 
         let eyes = SKLabelNode(text: "• •")
-        eyes.fontName = "AvenirNext-Bold"
+        eyes.fontName = GameFont.bold
         eyes.fontSize = 16
         eyes.fontColor = .black
         eyes.position = CGPoint(x: 0, y: 20)
@@ -223,7 +223,7 @@ final class WrongRobotTargetScene: SKScene {
         addChild(novaNode)
 
         let face = SKLabelNode(text: "?")
-        face.fontName = "AvenirNext-Bold"
+        face.fontName = GameFont.bold
         face.fontSize = 22
         face.fontColor = .happyBlue
         face.verticalAlignmentMode = .center
@@ -247,7 +247,7 @@ final class WrongRobotTargetScene: SKScene {
         addChild(surveillanceDroneNode)
 
         let eye = SKLabelNode(text: "●")
-        eye.fontName = "AvenirNext-Bold"
+        eye.fontName = GameFont.bold
         eye.fontSize = 16
         eye.fontColor = .warningRed
         eye.verticalAlignmentMode = .center
@@ -303,7 +303,7 @@ final class WrongRobotTargetScene: SKScene {
 
         let eyes = SKLabelNode(text: "– –")
         eyes.name = "passive_citizen"
-        eyes.fontName = "AvenirNext-Bold"
+        eyes.fontName = GameFont.bold
         eyes.fontSize = 13
         eyes.fontColor = .black
         eyes.position = CGPoint(x: 0, y: 10)
@@ -339,7 +339,7 @@ final class WrongRobotTargetScene: SKScene {
 
         let check = SKLabelNode(text: "✓")
         check.name = "ai_approved_robot"
-        check.fontName = "AvenirNext-Heavy"
+        check.fontName = GameFont.heavy
         check.fontSize = 24
         check.fontColor = .happyBlue
         check.verticalAlignmentMode = .center
@@ -357,7 +357,7 @@ final class WrongRobotTargetScene: SKScene {
         addChild(stopRobotButtonNode)
 
         let label = SKLabelNode(text: "STOP WHEEL BOT")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 16
         label.fontColor = .happyBlue
         label.verticalAlignmentMode = .center
@@ -371,7 +371,7 @@ final class WrongRobotTargetScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 22
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.08)
@@ -500,7 +500,7 @@ final class WrongRobotTargetScene: SKScene {
 
     private func showSafeStamp() {
         let stamp = SKLabelNode(text: "SAFE")
-        stamp.fontName = "AvenirNext-Heavy"
+        stamp.fontName = GameFont.heavy
         stamp.fontSize = 42
         stamp.fontColor = .happyBlue
         stamp.position = CGPoint(x: size.width / 2, y: size.height * 0.5)

@@ -149,7 +149,7 @@ final class ManualBreakfastScene: SKScene {
         aiScreenNode.zPosition = 2
         addChild(aiScreenNode)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 50
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -166,7 +166,7 @@ final class ManualBreakfastScene: SKScene {
         addChild(card)
 
         let command = SKLabelNode(text: "Choose the optimized\nblue meal.")
-        command.fontName = "AvenirNext-DemiBold"
+        command.fontName = GameFont.regular
         command.fontSize = 18
         command.fontColor = .happyBlue
         command.numberOfLines = 2
@@ -186,7 +186,7 @@ final class ManualBreakfastScene: SKScene {
         addChild(dispenserNode)
 
         let face = SKLabelNode(text: "AUTO CHEF ◡")
-        face.fontName = "AvenirNext-Heavy"
+        face.fontName = GameFont.heavy
         face.fontSize = 18
         face.fontColor = .happyBlue
         face.position = CGPoint(x: 0, y: 46)
@@ -210,7 +210,7 @@ final class ManualBreakfastScene: SKScene {
         dispenserNode.addChild(aiApprovedButtonNode)
 
         let label = SKLabelNode(text: "AI APPROVED")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 14
         label.fontColor = .happyBlue
         label.verticalAlignmentMode = .center
@@ -272,7 +272,7 @@ final class ManualBreakfastScene: SKScene {
 
         let text = SKLabelNode(text: label)
         text.name = node.name
-        text.fontName = "AvenirNext-Heavy"
+        text.fontName = GameFont.heavy
         text.fontSize = 12
         text.fontColor = choice == .handmadeToast ? .glitchPurple : .happyBlue
         text.position = CGPoint(x: 0, y: -48)
@@ -309,7 +309,7 @@ final class ManualBreakfastScene: SKScene {
         rakaNode.zPosition = 4
         addChild(rakaNode)
 
-        rakaEyesLabel.fontName = "AvenirNext-Bold"
+        rakaEyesLabel.fontName = GameFont.bold
         rakaEyesLabel.fontSize = 17
         rakaEyesLabel.fontColor = .black
         rakaEyesLabel.verticalAlignmentMode = .center
@@ -325,14 +325,14 @@ final class ManualBreakfastScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 23
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.1)
         feedbackLabel.zPosition = 8
         addChild(feedbackLabel)
 
-        stampLabel.fontName = "AvenirNext-Heavy"
+        stampLabel.fontName = GameFont.heavy
         stampLabel.fontSize = 18
         stampLabel.fontColor = .happyBlue
         stampLabel.alpha = 0

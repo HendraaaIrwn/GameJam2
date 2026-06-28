@@ -188,7 +188,7 @@ final class RejectAutoRoutineScene: SKScene {
         aiScreenNode.zPosition = 2
         addChild(aiScreenNode)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 54
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -205,7 +205,7 @@ final class RejectAutoRoutineScene: SKScene {
         addChild(card)
 
         let command = SKLabelNode(text: "Accept today’s\nperfect routine.")
-        command.fontName = "AvenirNext-DemiBold"
+        command.fontName = GameFont.regular
         command.fontSize = 18
         command.fontColor = .happyBlue
         command.numberOfLines = 2
@@ -224,7 +224,7 @@ final class RejectAutoRoutineScene: SKScene {
         rakaNode.zPosition = 3
         addChild(rakaNode)
 
-        rakaEyesLabel.fontName = "AvenirNext-Bold"
+        rakaEyesLabel.fontName = GameFont.bold
         rakaEyesLabel.fontSize = 18
         rakaEyesLabel.fontColor = .black
         rakaEyesLabel.verticalAlignmentMode = .center
@@ -246,7 +246,7 @@ final class RejectAutoRoutineScene: SKScene {
             smallRoutineCards.append(card)
 
             let label = SKLabelNode(text: title)
-            label.fontName = "AvenirNext-Bold"
+            label.fontName = GameFont.bold
             label.fontSize = 12
             label.fontColor = .happyBlue
             label.verticalAlignmentMode = .center
@@ -262,7 +262,7 @@ final class RejectAutoRoutineScene: SKScene {
         addChild(routineCardNode)
 
         let title = SKLabelNode(text: "TODAY’S ROUTINE")
-        title.fontName = "AvenirNext-Heavy"
+        title.fontName = GameFont.heavy
         title.fontSize = 22
         title.fontColor = .glitchPurple
         title.position = CGPoint(x: 0, y: 86)
@@ -271,7 +271,7 @@ final class RejectAutoRoutineScene: SKScene {
 
         for (index, item) in labels.enumerated() {
             let label = SKLabelNode(text: item)
-            label.fontName = "AvenirNext-DemiBold"
+            label.fontName = GameFont.regular
             label.fontSize = 14
             label.fontColor = .happyBlue
             label.position = CGPoint(x: 0, y: 42 - CGFloat(index) * 26)
@@ -288,7 +288,7 @@ final class RejectAutoRoutineScene: SKScene {
         routineCardNode.addChild(acceptButtonNode)
 
         let acceptLabel = SKLabelNode(text: "ACCEPT")
-        acceptLabel.fontName = "AvenirNext-Heavy"
+        acceptLabel.fontName = GameFont.heavy
         acceptLabel.fontSize = 18
         acceptLabel.fontColor = .happyBlue
         acceptLabel.verticalAlignmentMode = .center
@@ -296,7 +296,7 @@ final class RejectAutoRoutineScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 23
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.14)

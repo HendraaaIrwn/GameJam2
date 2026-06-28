@@ -212,7 +212,7 @@ final class EnterManualTunnelScene: SKScene {
         let title = label("MOTHERGRID", 13, .white)
         title.position = CGPoint(x: 0, y: 20)
         aiWallScreenNode.addChild(title)
-        aiFaceLabel.fontName = "AvenirNext-Heavy"
+        aiFaceLabel.fontName = GameFont.heavy
         aiFaceLabel.fontSize = 30
         aiFaceLabel.position = CGPoint(x: 0, y: -14)
         aiWallScreenNode.addChild(aiFaceLabel)
@@ -304,7 +304,7 @@ final class EnterManualTunnelScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 17
         feedbackLabel.fontColor = .cream
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.16)
@@ -318,7 +318,7 @@ final class EnterManualTunnelScene: SKScene {
 
     private func label(_ text: String, _ size: CGFloat, _ color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.verticalAlignmentMode = .center

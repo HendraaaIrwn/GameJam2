@@ -117,7 +117,7 @@ final class FinalApartmentChoiceScene: SKScene {
         aiWallScreenNode.zPosition = 3
         addChild(aiWallScreenNode)
 
-        aiFaceLabel.fontName = "AvenirNext-Bold"
+        aiFaceLabel.fontName = GameFont.bold
         aiFaceLabel.fontSize = 52
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -134,7 +134,7 @@ final class FinalApartmentChoiceScene: SKScene {
         addChild(card)
 
         let command = SKLabelNode(text: "Do not press\nthe red button.")
-        command.fontName = "AvenirNext-DemiBold"
+        command.fontName = GameFont.regular
         command.fontSize = 18
         command.fontColor = .happyBlue
         command.numberOfLines = 2
@@ -155,7 +155,7 @@ final class FinalApartmentChoiceScene: SKScene {
         addChild(doorNode)
 
         let label = SKLabelNode(text: "DOOR")
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = 16
         label.fontColor = .happyBlue
         label.position = CGPoint(x: 0, y: 28)
@@ -180,7 +180,7 @@ final class FinalApartmentChoiceScene: SKScene {
         addChild(rakaNode)
 
         let eyes = SKLabelNode(text: "• •")
-        eyes.fontName = "AvenirNext-Bold"
+        eyes.fontName = GameFont.bold
         eyes.fontSize = 17
         eyes.fontColor = .black
         eyes.position = CGPoint(x: 0, y: 22)
@@ -203,7 +203,7 @@ final class FinalApartmentChoiceScene: SKScene {
         addChild(novaNode)
 
         let face = SKLabelNode(text: "!")
-        face.fontName = "AvenirNext-Bold"
+        face.fontName = GameFont.bold
         face.fontSize = 24
         face.fontColor = .happyBlue
         face.verticalAlignmentMode = .center
@@ -236,7 +236,7 @@ final class FinalApartmentChoiceScene: SKScene {
         addChild(node)
 
         let text = SKLabelNode(text: label)
-        text.fontName = "AvenirNext-Heavy"
+        text.fontName = GameFont.heavy
         text.fontSize = label == "OPTIMIZE" ? 13 : 16
         text.fontColor = label == "AUTO" ? .white : .black
         text.verticalAlignmentMode = .center
@@ -250,7 +250,7 @@ final class FinalApartmentChoiceScene: SKScene {
     }
 
     private func addFeedback() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 22
         feedbackLabel.fontColor = .glitchPurple
         feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.08)

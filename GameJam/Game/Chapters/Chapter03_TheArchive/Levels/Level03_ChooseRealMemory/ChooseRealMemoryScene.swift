@@ -108,7 +108,7 @@ final class ChooseRealMemoryScene: SKScene {
         let title = makeLabel("MOTHERGRID", 12, .white)
         title.position = CGPoint(x: 0, y: 21)
         aiWallScreenNode.addChild(title)
-        aiFaceLabel.fontName = "AvenirNext-Heavy"
+        aiFaceLabel.fontName = GameFont.heavy
         aiFaceLabel.fontSize = 30
         aiFaceLabel.fontColor = .white
         aiFaceLabel.verticalAlignmentMode = .center
@@ -150,7 +150,7 @@ final class ChooseRealMemoryScene: SKScene {
         addChild(selectCorrectedButtonNode)
         selectCorrectedButtonNode.addChild(makeLabel("SELECT CORRECTED", 13, .white))
 
-        memoryCorrectedLabel.fontName = "AvenirNext-Heavy"
+        memoryCorrectedLabel.fontName = GameFont.heavy
         memoryCorrectedLabel.fontSize = 22
         memoryCorrectedLabel.fontColor = .white
         memoryCorrectedLabel.alpha = 0
@@ -244,7 +244,7 @@ final class ChooseRealMemoryScene: SKScene {
     }
 
     private func addFeedbackAndTimer() {
-        feedbackLabel.fontName = "AvenirNext-Heavy"
+        feedbackLabel.fontName = GameFont.heavy
         feedbackLabel.fontSize = 17
         feedbackLabel.fontColor = .manualYellow
         feedbackLabel.numberOfLines = 2
@@ -352,7 +352,7 @@ final class ChooseRealMemoryScene: SKScene {
 
     private func makeLabel(_ text: String, _ size: CGFloat, _ color: SKColor) -> SKLabelNode {
         let label = SKLabelNode(text: text)
-        label.fontName = "AvenirNext-Heavy"
+        label.fontName = GameFont.heavy
         label.fontSize = size
         label.fontColor = color
         label.horizontalAlignmentMode = .center
