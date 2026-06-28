@@ -32,13 +32,13 @@ enum ActiveLevel {
         case .rejectAutoRoutine:
             "Level 2 — Reject Auto Routine"
         case .openSmartCurtain:
-            "Level 3 — Open The Smart Curtain"
+            "Level 6 — Open The Smart Curtain"
         case .manualBreakfast:
             "Level 4 — Manual Breakfast"
         case .holdWristDevice:
             "Level 5 — Hold The Wrist Device"
         case .findManualKey:
-            "Level 6 — Find The Manual Key"
+            "Level 3 — Find The Manual Key"
         case .drawManualRoute:
             "Level 7 — Draw Manual Route To Door"
         case .finalApartmentChoice:
@@ -99,14 +99,14 @@ enum ActiveLevel {
             1
         case .rejectAutoRoutine, .chapter2WrongRobotTarget, .chapter3RestoreBrokenCityMap:
             2
-        case .openSmartCurtain, .chapter2AvoidSafeElevator, .chapter3ChooseRealMemory:
-            3
+        case .openSmartCurtain, .chapter2WalkAgainstCrowd, .chapter3ReconnectArchiveCables:
+            6
         case .manualBreakfast, .chapter2ManualBridgeBalance, .chapter3DecodeManualProtocol:
             4
         case .holdWristDevice, .chapter2RescueChairCitizen, .chapter3StabilizeNOVA:
             5
-        case .findManualKey, .chapter2WalkAgainstCrowd, .chapter3ReconnectArchiveCables:
-            6
+        case .findManualKey, .chapter2AvoidSafeElevator, .chapter3ChooseRealMemory:
+            3
         case .drawManualRoute, .chapter2FindOldTransitSwitch, .chapter3HideFromRewriteScan:
             7
         case .finalApartmentChoice, .chapter2EnterManualTunnel, .chapter3BroadcastDeletedTruth:
