@@ -20,8 +20,8 @@ func runManualKeySearchValidatorSelfCheck() {
     validator.startLevel(at: 0)
     assert(validator.validateTap(target: .brokenCable, time: 1.0) == .distractionSelected(target: .brokenCable))
     assert(validator.validateTap(target: .oldPhoto, time: 1.0) == .distractionSelected(target: .oldPhoto))
-    assert(validator.validateTap(target: .redChip, time: 1.0) == .distractionSelected(target: .redChip))
-    assert(validator.validateTap(target: .toyDoll, time: 1.0) == .distractionSelected(target: .toyDoll))
+    assert(validator.validateTap(target: .redChip, time: 1.0) == .trapSelected(target: .redChip))
+    assert(validator.validateTap(target: .toyDoll, time: 1.0) == .trapSelected(target: .toyDoll))
     assert(validator.validateTap(target: .table, time: 1.0) == .distractionSelected(target: .table))
 
     validator = ManualKeySearchValidator()

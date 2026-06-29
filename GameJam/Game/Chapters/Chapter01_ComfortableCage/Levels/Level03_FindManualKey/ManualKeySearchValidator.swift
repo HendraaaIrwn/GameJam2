@@ -25,7 +25,6 @@ enum ManualKeySearchValidationResult: Equatable {
 final class ManualKeySearchValidator {
     private let noInputTimeout: TimeInterval
     private let totalTimeLimit: TimeInterval
-
     private var levelStartTime: TimeInterval?
     private var lastInputTime: TimeInterval?
 
@@ -50,9 +49,9 @@ final class ManualKeySearchValidator {
             return .manualKeySelected
         case .smartKey:
             return .smartKeySelected
-        case .blueKeyHintButton, .aiWallScreen:
+        case .redChip, .toyDoll, .blueKeyHintButton, .aiWallScreen:
             return .trapSelected(target: target)
-        case .brokenCable, .oldPhoto, .redChip, .toyDoll, .table:
+        case .brokenCable, .oldPhoto, .table:
             return .distractionSelected(target: target)
         case .empty:
             return nil
@@ -61,12 +60,15 @@ final class ManualKeySearchValidator {
 
     func checkTimeouts(currentTime: TimeInterval) -> ManualKeySearchValidationResult? {
         guard let levelStartTime else { return nil }
+
         if currentTime - levelStartTime >= totalTimeLimit {
             return .totalTimeout
         }
+
         if let lastInputTime, currentTime - lastInputTime >= noInputTimeout {
             return .noInputTimeout
         }
+
         return nil
     }
 

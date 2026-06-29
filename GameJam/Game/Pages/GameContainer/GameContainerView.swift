@@ -18,9 +18,15 @@ struct GameContainerView: View {
 
             case .gameplay:
                 ZStack(alignment: .top) {
-                    SpriteView(scene: viewModel.scene)
-                        .id(viewModel.sceneID)
-                        .ignoresSafeArea()
+                    if viewModel.activeLevel == .findManualKey {
+                        FindManualKeyView(onComplete: viewModel.finishLevel)
+                            .id(viewModel.levelID)
+                            .ignoresSafeArea()
+                    } else {
+                        SpriteView(scene: viewModel.scene)
+                            .id(viewModel.sceneID)
+                            .ignoresSafeArea()
+                    }
 
                     GameHUDView(
                         chapterNumber: viewModel.chapterNumber,
