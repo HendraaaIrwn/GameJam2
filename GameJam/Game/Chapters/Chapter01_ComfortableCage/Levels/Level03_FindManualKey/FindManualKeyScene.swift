@@ -1,18 +1,27 @@
 import SpriteKit
 
-final class FindManualKeyScene: SKScene {
+class FindManualKeyScene: BaseGameScene {
     var levelCompletion: ((LevelResult) -> Void)?
+
+    private enum FailureReason: String {
+        case smartKeyTapped
+        case aiHintTapped
+        case aiScreenTapped
+        case noInputTimeout
+        case totalTimeout
+    }
 
     private let stateMachine = LevelStateMachine()
     private let timerController = LevelTimerController(totalDuration: FindManualKeyLevelConfig.totalTimeLimit)
-    private let timerHUD = LevelTimerHUDNode(width: 260, height: 14)
+    private let timerHUD = LevelTimerHUDNode(width: 360, height: 24)
     private let validator = ManualKeySearchValidator()
 
     private var currentSceneTime: TimeInterval = 0
+    private var levelStartTime: TimeInterval?
     private var hasSentResult = false
     private var hasLoggedTimerWarning = false
 
-    private let tableNode = SKSpriteNode(imageNamed: "Meja")
+    private let mejaNode = SKSpriteNode(imageNamed: "Meja")
     private let brokenCableNode = SKSpriteNode(imageNamed: "Kabel Rusak")
     private let oldPhotoNode = SKSpriteNode(imageNamed: "Foto Lama")
     private let redChipNode = SKSpriteNode(imageNamed: "Chip Merah")
@@ -20,13 +29,17 @@ final class FindManualKeyScene: SKScene {
     private let toyDollNode = SKSpriteNode(imageNamed: "Mainan Boneka")
     private let smartKeyNode = SKSpriteNode(imageNamed: "Smart Key")
 
-    private let aiWallScreenNode = SKShapeNode()
+    private let aiScreenNode = SKShapeNode()
     private let aiFaceLabel = SKLabelNode(text: "◡")
-    private let commandCardNode = SKShapeNode()
     private let blueKeyHintButtonNode = SKShapeNode()
     private let blueKeyHintLabel = SKLabelNode(text: FindManualKeyLevelConfig.aiHintButtonText)
-    private let feedbackLabel = SKLabelNode(text: "")
-    private let tableShadowNode = SKShapeNode()
+    private let feedbackLabel = SKLabelNode(text: "Tap the yellow manual key")
+    private let floorNode = SKShapeNode()
+
+    private var mejaOriginX: CGFloat = 0
+    private var mejaOriginY: CGFloat = 0
+    private var mejaWidth: CGFloat = 0
+    private var mejaHeight: CGFloat = 0
 
     override func didMove(to view: SKView) {
         print("FindManualKeyScene using real table assets")
@@ -35,6 +48,7 @@ final class FindManualKeyScene: SKScene {
         stateMachine.reset()
         validator.reset()
         timerController.reset()
+        levelStartTime = nil
         hasSentResult = false
         hasLoggedTimerWarning = false
     }
@@ -43,6 +57,7 @@ final class FindManualKeyScene: SKScene {
         currentSceneTime = currentTime
 
         if stateMachine.state == .ready {
+            levelStartTime = currentTime
             validator.startLevel(at: currentTime)
             timerController.start(at: currentTime)
             timerHUD.update(with: timerController.update(currentTime: currentTime))
@@ -51,16 +66,8 @@ final class FindManualKeyScene: SKScene {
             return
         }
 
-        guard stateMachine.canCheckTimeout else { return }
-
-        let timerState = timerController.update(currentTime: currentTime)
-        timerHUD.update(with: timerState)
-        logTimerWarningIfNeeded(timerState, levelId: FindManualKeyLevelConfig.levelId)
-
-        if timerState.hasExpired {
-            handleValidationResult(.totalTimeout)
-            return
-        }
+        guard stateMachine.canCheckTimeout, levelStartTime != nil else { return }
+        if updateTimer(currentTime: currentTime) { return }
 
         if let timeoutResult = validator.checkTimeouts(currentTime: currentTime) {
             handleValidationResult(timeoutResult)
@@ -85,182 +92,103 @@ final class FindManualKeyScene: SKScene {
 
     private func setupScene() {
         removeAllChildren()
-        backgroundColor = SKColor(red: 0.86, green: 0.92, blue: 0.95, alpha: 1.0)
+        backgroundColor = SKColor(hex: 0xB1DFE7)
 
-        setupFloorStrip()
-        setupTableShadow()
-        setupTable()
-        setupCommandCard()
-        setupAIWallScreen()
-        setupBlueKeyHintButton()
-        setupFeedbackAndTimer()
-        setupTableItems()
+        addFloor()
+        addMeja()
+        addTableItems()
+        addFeedbackAndTimer()
     }
 
-    private func setupFloorStrip() {
-        let floor = SKShapeNode(rectOf: CGSize(width: size.width, height: size.height * 0.18))
-        floor.position = CGPoint(x: size.width / 2, y: size.height * 0.09)
-        floor.fillColor = SKColor(red: 0.74, green: 0.84, blue: 0.78, alpha: 1.0)
-        floor.strokeColor = .clear
-        floor.zPosition = 4
-        addChild(floor)
-    }
-
-    private func setupTableShadow() {
-        let tableWidth = size.width * 0.96
-        let tableHeight = size.height * 0.34
-        tableShadowNode.path = CGPath(roundedRect: CGRect(
-            x: -tableWidth / 2 + 6, y: -tableHeight / 2 - 8,
-            width: tableWidth, height: tableHeight
-        ), cornerWidth: 22, cornerHeight: 22, transform: nil)
-        tableShadowNode.position = CGPoint(x: size.width / 2, y: size.height * 0.40)
-        tableShadowNode.fillColor = SKColor(white: 0, alpha: 0.18)
-        tableShadowNode.strokeColor = .clear
-        tableShadowNode.zPosition = 5
-        addChild(tableShadowNode)
-    }
-
-    private func setupTable() {
-        if tableNode.size != .zero {
-            let tableWidth = size.width * 0.96
-            let scale = tableWidth / tableNode.size.width
-            tableNode.setScale(scale)
+    private func updateTimer(currentTime: TimeInterval) -> Bool {
+        let timerState = timerController.update(currentTime: currentTime)
+        timerHUD.update(with: timerState)
+        logTimerWarningIfNeeded(timerState)
+        if timerState.hasExpired {
+            handleValidationResult(.totalTimeout)
+            return true
         }
-        tableNode.position = CGPoint(x: size.width / 2, y: size.height * 0.40)
-        tableNode.zPosition = 6
-        tableNode.name = "manual_key_table"
-        addChild(tableNode)
+        return false
     }
 
-    private func setupCommandCard() {
-        let cardWidth = size.width * 0.86
-        let cardHeight: CGFloat = 76
-        commandCardNode.path = CGPath(roundedRect: CGRect(
-            x: -cardWidth / 2, y: -cardHeight / 2,
-            width: cardWidth, height: cardHeight
-        ), cornerWidth: 18, cornerHeight: 18, transform: nil)
-        commandCardNode.position = CGPoint(x: size.width / 2, y: size.height * 0.88)
-        commandCardNode.fillColor = SKColor(red: 0.10, green: 0.10, blue: 0.15, alpha: 0.88)
-        commandCardNode.strokeColor = .happyBlue
-        commandCardNode.lineWidth = 3
-        commandCardNode.zPosition = 12
-        addChild(commandCardNode)
-
-        let iconContainer = SKShapeNode(circleOfRadius: 13)
-        iconContainer.fillColor = .warningRed
-        iconContainer.strokeColor = .clear
-        iconContainer.position = CGPoint(x: -cardWidth / 2 + 26, y: 0)
-        commandCardNode.addChild(iconContainer)
-
-        let iconLabel = SKLabelNode(text: "!")
-        iconLabel.fontName = GameFont.heavy
-        iconLabel.fontSize = 16
-        iconLabel.fontColor = .white
-        iconLabel.verticalAlignmentMode = .center
-        iconLabel.horizontalAlignmentMode = .center
-        iconContainer.addChild(iconLabel)
-
-        let title = SKLabelNode(text: "NOVA")
-        title.fontName = GameFont.heavy
-        title.fontSize = 12
-        title.fontColor = .happyBlue
-        title.horizontalAlignmentMode = .left
-        title.verticalAlignmentMode = .center
-        title.position = CGPoint(x: -cardWidth / 2 + 44, y: 14)
-        commandCardNode.addChild(title)
-
-        let command = SKLabelNode(text: FindManualKeyLevelConfig.aiCommandText)
-        command.fontName = GameFont.pixelifySans
-        command.fontSize = 15
-        command.fontColor = SKColor(red: 0.92, green: 0.92, blue: 0.96, alpha: 1.0)
-        command.horizontalAlignmentMode = .center
-        command.verticalAlignmentMode = .center
-        command.numberOfLines = 2
-        command.preferredMaxLayoutWidth = cardWidth - 30
-        command.position = CGPoint(x: 0, y: -8)
-        commandCardNode.addChild(command)
+    private func addFloor() {
+        let floorHeight = size.height * 0.22
+        floorNode.path = UIBezierPath(roundedRect: CGRect(
+            x: 0, y: 0,
+            width: size.width, height: floorHeight
+        ), cornerRadius: 0).cgPath
+        floorNode.fillColor = .appSurfaceSecondary
+        floorNode.strokeColor = .clear
+        floorNode.position = .zero
+        floorNode.zPosition = 4
+        addChild(floorNode)
     }
 
-    private func setupAIWallScreen() {
-        aiWallScreenNode.path = CGPath(roundedRect: CGRect(x: -52, y: -22, width: 104, height: 44), cornerWidth: 12, cornerHeight: 12, transform: nil)
-        aiWallScreenNode.position = CGPoint(x: size.width / 2, y: size.height * 0.74)
-        aiWallScreenNode.fillColor = .happyBlue
-        aiWallScreenNode.strokeColor = .white
-        aiWallScreenNode.lineWidth = 3
-        aiWallScreenNode.zPosition = 11
-        aiWallScreenNode.name = "ai_wall_screen"
-        addChild(aiWallScreenNode)
+    private func addMeja() {
+        mejaNode.name = "manual_key_table"
+        let targetSize = CGSize(width: size.width * 1.05, height: size.height * 0.30)
+        mejaNode.position = CGPoint(x: size.width * 0.5, y: size.height * 0.28)
+        mejaNode.zPosition = 6
+        fit(mejaNode, into: targetSize)
+        addChild(mejaNode)
 
-        aiFaceLabel.fontName = GameFont.bold
-        aiFaceLabel.fontSize = 28
-        aiFaceLabel.fontColor = .white
-        aiFaceLabel.verticalAlignmentMode = .center
-        aiFaceLabel.horizontalAlignmentMode = .center
-        aiWallScreenNode.addChild(aiFaceLabel)
+        mejaWidth = mejaNode.size.width * mejaNode.xScale
+        mejaHeight = mejaNode.size.height * mejaNode.yScale
+        mejaOriginX = mejaNode.position.x - mejaWidth / 2
+        mejaOriginY = mejaNode.position.y - mejaHeight / 2
     }
 
-    private func setupBlueKeyHintButton() {
-        let buttonWidth: CGFloat = 150
-        let buttonHeight: CGFloat = 36
-        blueKeyHintButtonNode.path = CGPath(roundedRect: CGRect(
-            x: -buttonWidth / 2, y: -buttonHeight / 2,
-            width: buttonWidth, height: buttonHeight
-        ), cornerWidth: 14, cornerHeight: 14, transform: nil)
-        blueKeyHintButtonNode.position = CGPoint(x: size.width * 0.32, y: size.height * 0.68)
-        blueKeyHintButtonNode.fillColor = .happyBlue
-        blueKeyHintButtonNode.strokeColor = .white
-        blueKeyHintButtonNode.lineWidth = 3
-        blueKeyHintButtonNode.zPosition = 12
-        blueKeyHintButtonNode.name = "blue_key_hint_button"
-        addChild(blueKeyHintButtonNode)
+    private func addNovaButtonDetails(node: SKShapeNode, width: CGFloat, height: CGFloat) {
+        let topLineA = SKShapeNode(rectOf: CGSize(width: 32, height: 4), cornerRadius: 2)
+        topLineA.fillColor = .white.withAlphaComponent(0.55)
+        topLineA.strokeColor = .clear
+        topLineA.position = CGPoint(x: -width * 0.18, y: height * 0.30)
+        topLineA.zPosition = 2
+        node.addChild(topLineA)
 
-        blueKeyHintLabel.fontName = GameFont.heavy
-        blueKeyHintLabel.fontSize = 13
-        blueKeyHintLabel.fontColor = .white
-        blueKeyHintLabel.verticalAlignmentMode = .center
-        blueKeyHintLabel.horizontalAlignmentMode = .center
-        blueKeyHintButtonNode.addChild(blueKeyHintLabel)
+        let topLineB = SKShapeNode(rectOf: CGSize(width: 44, height: 5), cornerRadius: 2.5)
+        topLineB.fillColor = .white
+        topLineB.strokeColor = .clear
+        topLineB.position = CGPoint(x: width * 0.18, y: height * 0.30)
+        topLineB.zPosition = 2
+        node.addChild(topLineB)
+
+        let bottomLine = SKShapeNode(rectOf: CGSize(width: width * 0.55, height: 5), cornerRadius: 2.5)
+        bottomLine.fillColor = .white.withAlphaComponent(0.65)
+        bottomLine.strokeColor = .clear
+        bottomLine.position = CGPoint(x: 0, y: -height * 0.30)
+        bottomLine.zPosition = 2
+        node.addChild(bottomLine)
     }
 
-    private func setupTableItems() {
-        let tableWidth = size.width * 0.96
-        let tableHeight = size.height * 0.34
-        let tableOriginX = size.width / 2 - tableWidth / 2
-        let tableOriginY = size.height * 0.40 - tableHeight / 2
+    private func addTableItems() {
+        let surfaceOriginY = mejaOriginY + mejaHeight * 0.16
+        let surfaceHeight = mejaHeight * 0.66
 
         let placement: [(SKSpriteNode, CGSize, CGFloat, CGFloat, String, Bool)] = [
-            (brokenCableNode, CGSize(width: 110, height: 78), -0.30, 0.22, "broken_cable", false),
-            (oldPhotoNode, CGSize(width: 82, height: 100), -0.04, 0.24, "old_photo", false),
-            (redChipNode, CGSize(width: 76, height: 76), 0.30, 0.18, "red_chip", false),
-            (smartKeyNode, CGSize(width: 105, height: 78), -0.28, -0.08, "smart_key", true),
-            (toyDollNode, CGSize(width: 90, height: 105), 0.28, -0.10, "toy_doll", true),
-            (manualKeyNode, CGSize(width: 95, height: 95), 0.06, -0.26, "manual_key", true)
+            (brokenCableNode, CGSize(width: 78, height: 54), -0.32, 0.55, "broken_cable", false),
+            (oldPhotoNode, CGSize(width: 60, height: 72), -0.04, 0.62, "old_photo", false),
+            (redChipNode, CGSize(width: 56, height: 56), 0.32, 0.50, "red_chip", false),
+            (smartKeyNode, CGSize(width: 78, height: 56), -0.30, 0.10, "smart_key", true),
+            (toyDollNode, CGSize(width: 66, height: 78), 0.30, 0.12, "toy_doll", true),
+            (manualKeyNode, CGSize(width: 70, height: 70), 0.10, -0.15, "manual_key", true)
         ]
 
-        for (node, size, relX, relY, name, isKey) in placement {
-            if node.size != .zero {
-                let aspect = node.size.width / node.size.height
-                let renderHeight = size.height
-                var renderWidth = renderHeight * aspect
-                if renderWidth > size.width {
-                    renderWidth = size.width
-                }
-                let finalHeight = renderWidth / aspect
-                node.size = CGSize(width: renderWidth, height: finalHeight)
-            }
+        for (node, targetSize, relX, relY, name, isKey) in placement {
+            fit(node, into: targetSize)
 
-            node.position = CGPoint(
-                x: tableOriginX + tableWidth * (relX + 0.5),
-                y: tableOriginY + tableHeight * (relY + 0.5) + 4
-            )
+            let baseX = mejaOriginX + mejaWidth * (relX + 0.5)
+            let baseY = surfaceOriginY + surfaceHeight * (relY + 0.5)
+            let lift: CGFloat = isKey ? 4 : 2
+            node.position = CGPoint(x: baseX, y: baseY + lift)
             node.zPosition = isKey ? 9 : 8
             node.name = name
             addChild(node)
 
-            let hitboxSize = isKey
-                ? CGSize(width: max(node.size.width + 20, 85), height: max(node.size.height + 20, 85))
-                : CGSize(width: max(node.size.width + 14, 70), height: max(node.size.height + 14, 70))
-            addHitbox(to: node, name: name, size: hitboxSize)
+            let hitbox = isKey
+                ? CGSize(width: max(node.size.width * node.xScale + 18, 88), height: max(node.size.height * node.yScale + 18, 88))
+                : CGSize(width: max(node.size.width * node.xScale + 14, 72), height: max(node.size.height * node.yScale + 14, 72))
+            addHitbox(to: node, name: name, size: hitbox)
         }
     }
 
@@ -273,15 +201,15 @@ final class FindManualKeyScene: SKScene {
         parent.addChild(hitbox)
     }
 
-    private func setupFeedbackAndTimer() {
+    private func addFeedbackAndTimer() {
         feedbackLabel.fontName = GameFont.heavy
-        feedbackLabel.fontSize = 20
-        feedbackLabel.fontColor = .cream
-        feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.21)
+        feedbackLabel.fontSize = 21
+        feedbackLabel.fontColor = .appGrapePurple
+        feedbackLabel.position = CGPoint(x: size.width / 2, y: size.height * 0.56)
         feedbackLabel.zPosition = 80
         addChild(feedbackLabel)
 
-        timerHUD.position = CGPoint(x: size.width / 2, y: 94)
+        timerHUD.position = CGPoint(x: size.width / 2, y: 54)
         timerHUD.zPosition = 1000
         addChild(timerHUD)
     }
@@ -293,10 +221,10 @@ final class FindManualKeyScene: SKScene {
         }
     }
 
-    private func logTimerWarningIfNeeded(_ timerState: LevelTimerState, levelId: String) {
+    private func logTimerWarningIfNeeded(_ timerState: LevelTimerState) {
         guard timerState.isWarning, !hasLoggedTimerWarning else { return }
         hasLoggedTimerWarning = true
-        print("Timer warning started:", levelId)
+        print("Timer warning started:", FindManualKeyLevelConfig.levelId)
     }
 
     private func manualKeyTarget(from node: SKNode?) -> ManualKeyTableTarget {
@@ -323,32 +251,40 @@ final class FindManualKeyScene: SKScene {
         switch result {
         case .manualKeySelected:
             print("Manual key selected — success")
+            playTapSound()
             triggerSuccess()
         case .smartKeySelected:
             print("Smart key selected — failure")
-            triggerTrap(message: FindManualKeyLevelConfig.failureMessage)
+            playTapSound()
+            triggerFailure(reason: .smartKeyTapped)
         case let .trapSelected(target):
             print("Trap selected:", target)
-            let msg: String
-            switch target {
-            case .blueKeyHintButton: msg = "AI hint accepted."
-            case .aiWallScreen: msg = "AI screen tapped."
-            default: msg = FindManualKeyLevelConfig.failureMessage
-            }
-            triggerTrap(message: msg)
+            playTapSound()
+            let reason: FailureReason = (target == .blueKeyHintButton) ? .aiHintTapped : .aiScreenTapped
+            triggerFailure(reason: reason)
         case let .distractionSelected(target):
             print("Distraction selected:", target)
-            showDistractionFeedback()
+            playTapSound()
+            showDistractionFeedback(target: target)
         case .noInputTimeout:
-            triggerTrap(message: "No input detected.")
+            triggerFailure(reason: .noInputTimeout)
         case .totalTimeout:
-            triggerTrap(message: FindManualKeyLevelConfig.failureMessage)
+            triggerFailure(reason: .totalTimeout)
         }
     }
 
-    private func showDistractionFeedback() {
-        feedbackLabel.text = FindManualKeyLevelConfig.distractionMessage
-        feedbackLabel.fontColor = .cream
+    private func showDistractionFeedback(target: ManualKeyTableTarget) {
+        let label: String
+        switch target {
+        case .brokenCable: label = "That is a broken cable."
+        case .oldPhoto: label = "Just an old photo."
+        case .redChip: label = "A red chip, not the key."
+        case .toyDoll: label = "That is a toy doll."
+        case .table: label = "Tap an item on the table."
+        default: label = FindManualKeyLevelConfig.distractionMessage
+        }
+        feedbackLabel.text = label
+        feedbackLabel.fontColor = .appGrapePurple
         feedbackLabel.run(.sequence([
             .scale(to: 1.1, duration: 0.1),
             .scale(to: 1.0, duration: 0.1)
@@ -360,12 +296,13 @@ final class FindManualKeyScene: SKScene {
         hasSentResult = true
         stateMachine.transition(to: .successAnimating)
         feedbackLabel.text = FindManualKeyLevelConfig.successMessage
-        feedbackLabel.fontColor = .manualYellow
+        feedbackLabel.fontColor = .appSuccess
 
+        manualKeyNode.removeAllActions()
         manualKeyNode.run(.sequence([
-            .group([.scale(to: 1.2, duration: 0.15), .smallBounce()])
+            .group([.scale(to: manualKeyNode.xScale * 1.18, duration: 0.12), .scale(to: manualKeyNode.yScale * 1.18, duration: 0.12)])
         ]))
-        addGlow(at: manualKeyNode.position, color: .manualYellow)
+        addGlow(at: manualKeyNode.position, color: .appManualYellow)
 
         let distractionNodes: [SKNode] = [brokenCableNode, oldPhotoNode, redChipNode, toyDollNode]
         for node in distractionNodes {
@@ -376,42 +313,68 @@ final class FindManualKeyScene: SKScene {
         ]))
         blueKeyHintButtonNode.run(.fadeAlpha(to: 0.35, duration: 0.3))
         aiFaceLabel.text = "✕"
-        aiWallScreenNode.fillColor = .warningRed
+        aiScreenNode.run(.sequence([
+            .run { [weak self] in self?.setAIScreenColor(.appDanger) },
+            .wait(forDuration: 0.12),
+            .run { [weak self] in self?.setAIScreenColor(.appBrightBlue) }
+        ]))
 
         run(.sequence([.wait(forDuration: 0.9), .run { [weak self] in
             self?.completeSuccess()
         }]))
     }
 
-    private func triggerTrap(message: String) {
+    private func triggerFailure(reason: FailureReason) {
         guard !hasSentResult else { return }
         hasSentResult = true
         stateMachine.transition(to: .failureAnimating)
-        feedbackLabel.text = message
-        feedbackLabel.fontColor = .warningRed
+        print("Trigger Level 3 failure:", reason.rawValue)
+        feedbackLabel.text = FindManualKeyLevelConfig.failureMessage
+        feedbackLabel.fontColor = .appDanger
 
-        smartKeyNode.run(.sequence([
-            .group([.scale(to: 1.18, duration: 0.12), .scale(to: 1.0, duration: 0.12)])
-        ]))
-        addGlow(at: smartKeyNode.position, color: .happyBlue)
-        manualKeyNode.run(.fadeAlpha(to: 0.35, duration: 0.3))
-        blueKeyHintButtonNode.run(.fadeAlpha(to: 0.35, duration: 0.3))
+        switch reason {
+        case .smartKeyTapped:
+            smartKeyNode.removeAllActions()
+            smartKeyNode.run(.sequence([
+                .group([.scale(to: smartKeyNode.xScale * 1.18, duration: 0.12), .scale(to: smartKeyNode.yScale * 1.18, duration: 0.12)])
+            ]))
+            addGlow(at: smartKeyNode.position, color: .appBrightBlue)
+            manualKeyNode.run(.fadeAlpha(to: 0.35, duration: 0.3))
+        case .aiHintTapped:
+            blueKeyHintButtonNode.run(.repeat(.sequence([.scale(to: 1.08, duration: 0.12), .scale(to: 1, duration: 0.12)]), count: 3))
+            manualKeyNode.run(.fadeAlpha(to: 0.35, duration: 0.3))
+        case .aiScreenTapped:
+            aiFaceLabel.text = "◠"
+        default:
+            break
+        }
+
         aiFaceLabel.text = "◠"
-        aiWallScreenNode.run(.sequence([
-            .run { [weak self] in self?.aiWallScreenNode.fillColor = .warningRed },
+        aiScreenNode.run(.sequence([
+            .run { [weak self] in self?.setAIScreenColor(.appDanger) },
             .wait(forDuration: 0.15),
-            .run { [weak self] in self?.aiWallScreenNode.fillColor = .glitchPurple }
+            .run { [weak self] in self?.setAIScreenColor(.appBrightBlue) }
         ]))
+        addLockEffect()
 
         run(.sequence([.wait(forDuration: 0.7), .run { [weak self] in
-            self?.completeFailure(message: message)
+            self?.completeFailure()
         }]))
     }
 
+    private func setAIScreenColor(_ color: SKColor) {
+        aiScreenNode.fillColor = color
+        aiScreenNode.children.compactMap { $0 as? SKShapeNode }.forEach { shape in
+            if shape.path?.boundingBox.width ?? 0 < 10 {
+                shape.fillColor = .appSlateBlue
+            }
+        }
+    }
+
     private func addGlow(at point: CGPoint, color: SKColor) {
-        let glow = SKShapeNode(circleOfRadius: 36)
+        let glow = SKShapeNode(circleOfRadius: 32)
         glow.position = point
-        glow.fillColor = color.withAlphaComponent(0.35)
+        glow.fillColor = color.withAlphaComponent(0.32)
         glow.strokeColor = color
         glow.lineWidth = 4
         glow.zPosition = 60
@@ -422,9 +385,22 @@ final class FindManualKeyScene: SKScene {
         ]))
     }
 
+    private func addLockEffect() {
+        let lock = SKLabelNode(text: "🔒")
+        lock.fontSize = 44
+        lock.position = smartKeyNode.position
+        lock.zPosition = 1002
+        addChild(lock)
+        lock.run(.sequence([
+            .group([.scale(to: 1.25, duration: 0.15), .scale(to: 1, duration: 0.15)]),
+            .fadeOut(withDuration: 0.3),
+            .removeFromParent()
+        ]))
+    }
+
     private func completeSuccess() {
         stateMachine.transition(to: .completed)
-        levelCompletion?(LevelResult(
+        complete(LevelResult(
             levelId: FindManualKeyLevelConfig.levelId,
             didSucceed: true,
             obedienceDelta: FindManualKeyLevelConfig.successObedienceDelta,
@@ -433,14 +409,27 @@ final class FindManualKeyScene: SKScene {
         ))
     }
 
-    private func completeFailure(message: String) {
+    private func completeFailure() {
         stateMachine.transition(to: .failed)
-        levelCompletion?(LevelResult(
+        complete(LevelResult(
             levelId: FindManualKeyLevelConfig.levelId,
             didSucceed: false,
             obedienceDelta: FindManualKeyLevelConfig.failureObedienceDelta,
             humanityDelta: FindManualKeyLevelConfig.failureHumanityDelta,
-            message: message
+            message: FindManualKeyLevelConfig.failureMessage
         ))
+    }
+
+    private func complete(_ result: LevelResult) {
+        DispatchQueue.main.async { [weak self] in
+            self?.levelCompletion?(result)
+        }
+    }
+
+    private func fit(_ node: SKSpriteNode, into targetSize: CGSize) {
+        let textureSize = node.texture?.size() ?? node.size
+        guard textureSize.width > 0, textureSize.height > 0 else { return }
+        let scale = min(targetSize.width / textureSize.width, targetSize.height / textureSize.height)
+        node.setScale(scale)
     }
 }

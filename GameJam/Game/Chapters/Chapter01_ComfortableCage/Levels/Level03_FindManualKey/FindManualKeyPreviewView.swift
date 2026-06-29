@@ -90,9 +90,9 @@ struct FindManualKeyPreviewView: View {
                         .padding(.horizontal, 4)
                         .padding(.vertical, 2)
                         .background(
-                            Capsule().fill(item.color.opacity(0.9))
+                            Capsule().fill(item.color.opacity(0.85))
                         )
-                        .position(x: item.position.x, y: item.position.y - 38)
+                        .position(x: item.position.x, y: item.position.y - 36)
                 }
                 ForEach(zoneLabels, id: \.name) { zone in
                     Text(zone.name)
@@ -101,9 +101,9 @@ struct FindManualKeyPreviewView: View {
                         .padding(.horizontal, 4)
                         .padding(.vertical, 2)
                         .background(
-                            Capsule().fill(zone.color.opacity(0.9))
+                            Capsule().fill(zone.color.opacity(0.85))
                         )
-                        .position(zone.position)
+                        .position(x: zone.position.x, y: zone.position.y - (zone.size.height / 2 + 14))
                 }
             }
 
@@ -240,37 +240,58 @@ struct FindManualKeyPreviewView: View {
     }
 
     private let itemLabels: [ItemLabel] = {
-        let tableWidth: CGFloat = 390 * 0.96
-        let tableHeight: CGFloat = 844 * 0.34
-        let tableOriginX = 390 / 2 - tableWidth / 2
-        let tableOriginY = 844 * 0.40 - tableHeight / 2
+        let mejaCenterX: CGFloat = 390 * 0.5
+        let mejaCenterY: CGFloat = 844 * 0.28
+        let mejaSize: CGFloat = 253
+        let mejaOriginX = mejaCenterX - mejaSize / 2
+        let mejaOriginY = mejaCenterY - mejaSize / 2
+        let surfaceOriginY = mejaOriginY + mejaSize * 0.16
+        let surfaceHeight = mejaSize * 0.66
+        let sceneHeight: CGFloat = 844
 
-        func pos(_ relX: CGFloat, _ relY: CGFloat) -> CGPoint {
+        func toSwiftUI(_ spriteKitPoint: CGPoint) -> CGPoint {
             CGPoint(
-                x: tableOriginX + tableWidth * (relX + 0.5),
-                y: tableOriginY + tableHeight * (relY + 0.5) + 4
+                x: spriteKitPoint.x,
+                y: sceneHeight - spriteKitPoint.y
             )
         }
 
+        func spritePos(_ relX: CGFloat, _ relY: CGFloat) -> CGPoint {
+            CGPoint(
+                x: mejaOriginX + mejaSize * (relX + 0.5),
+                y: surfaceOriginY + surfaceHeight * (relY + 0.5) + 4
+            )
+        }
+
+        func pos(_ relX: CGFloat, _ relY: CGFloat) -> CGPoint {
+            toSwiftUI(spritePos(relX, relY))
+        }
+
         func hitbox(_ baseW: CGFloat, _ baseH: CGFloat) -> CGSize {
-            CGSize(width: max(baseW + 20, 85), height: max(baseH + 20, 85))
+            CGSize(width: max(baseW + 20, 88), height: max(baseH + 20, 88))
         }
 
         return [
-            ItemLabel(name: "Kabel Rusak", emoji: "🔌", position: pos(-0.30, 0.22), color: .gray, hitboxSize: hitbox(110, 78)),
-            ItemLabel(name: "Foto Lama", emoji: "🖼️", position: pos(-0.04, 0.24), color: .cyan, hitboxSize: hitbox(82, 100)),
-            ItemLabel(name: "Chip Merah", emoji: "🔴", position: pos(0.30, 0.18), color: .red, hitboxSize: hitbox(76, 76)),
-            ItemLabel(name: "Smart Key", emoji: "💳", position: pos(-0.28, -0.08), color: .blue, hitboxSize: hitbox(105, 78)),
-            ItemLabel(name: "Mainan Boneka", emoji: "🤖", position: pos(0.28, -0.10), color: .purple, hitboxSize: hitbox(90, 105)),
-            ItemLabel(name: "Kunci Fisik", emoji: "🗝️", position: pos(0.06, -0.26), color: .yellow, hitboxSize: hitbox(95, 95))
+            ItemLabel(name: "Kabel Rusak", emoji: "🔌", position: pos(-0.32, 0.55), color: .gray, hitboxSize: hitbox(78, 54)),
+            ItemLabel(name: "Foto Lama", emoji: "🖼️", position: pos(-0.04, 0.62), color: .cyan, hitboxSize: hitbox(60, 72)),
+            ItemLabel(name: "Chip Merah", emoji: "🔴", position: pos(0.32, 0.50), color: .red, hitboxSize: hitbox(56, 56)),
+            ItemLabel(name: "Smart Key", emoji: "💳", position: pos(-0.30, 0.10), color: .blue, hitboxSize: hitbox(78, 56)),
+            ItemLabel(name: "Mainan Boneka", emoji: "🤖", position: pos(0.30, 0.12), color: .purple, hitboxSize: hitbox(66, 78)),
+            ItemLabel(name: "Kunci Fisik", emoji: "🗝️", position: pos(0.10, -0.15), color: .yellow, hitboxSize: hitbox(70, 70))
         ]
     }()
 
-    private let zoneLabels: [ZoneLabel] = [
-        ZoneLabel(name: "NOVA CMD", position: CGPoint(x: 195, y: 844 * 0.88), size: CGSize(width: 336, height: 76), color: .black),
-        ZoneLabel(name: "AI SCREEN", position: CGPoint(x: 195, y: 844 * 0.74), size: CGSize(width: 104, height: 44), color: .blue),
-        ZoneLabel(name: "AI HINT BTN", position: CGPoint(x: 390 * 0.32, y: 844 * 0.68), size: CGSize(width: 150, height: 36), color: .indigo)
-    ]
+    private let zoneLabels: [ZoneLabel] = {
+        let sceneHeight: CGFloat = 844
+        func sky(_ y: CGFloat) -> CGPoint {
+            CGPoint(x: 195, y: sceneHeight - y)
+        }
+        return [
+            ZoneLabel(name: "AI SCREEN", position: sky(844 * 0.78), size: CGSize(width: 140, height: 64), color: .blue),
+            ZoneLabel(name: "AI HINT BTN", position: sky(844 * 0.68), size: CGSize(width: 168, height: 48), color: .indigo),
+            ZoneLabel(name: "FEEDBACK", position: sky(844 * 0.56), size: CGSize(width: 320, height: 30), color: .purple)
+        ]
+    }()
 
     private let itemLegend: [ItemLegend] = [
         ItemLegend(name: "Kabel Rusak", color: .gray),
