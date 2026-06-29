@@ -35,7 +35,11 @@ struct GameJamApp: App {
 
     var body: some Scene {
         WindowGroup {
-            GameContainerView(viewModel: gameFlow)
+            if CommandLine.arguments.contains("-preview-level3") {
+                FindManualKeyPreviewView()
+            } else {
+                GameContainerView(viewModel: gameFlow)
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ final class GameFlowViewModel {
     private(set) var screen: GameScreen = .home
     private(set) var activeTransition: ActiveChapterTransition = .chapter1ToChapter2
     private(set) var sceneID = UUID()
+    private(set) var levelID = UUID()
 
     var scene: SKScene
 
@@ -53,10 +54,13 @@ final class GameFlowViewModel {
     func retry() {
         attempt += 1
         lastResult = nil
-        setScene(for: activeLevel)
+        levelID = UUID()
+        if activeLevel != .findManualKey {
+            setScene(for: activeLevel)
+        }
     }
 
-    private func finishLevel(with result: LevelResult) {
+    func finishLevel(with result: LevelResult) {
         guard lastResult == nil else { return }
         score.apply(result)
 
@@ -504,6 +508,7 @@ final class GameFlowViewModel {
         scene = Self.makeScene(for: level)
         assignCompletion(to: scene)
         sceneID = UUID()
+        levelID = UUID()
     }
 
     private func assignCompletion(to scene: SKScene) {
